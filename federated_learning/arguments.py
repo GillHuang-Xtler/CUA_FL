@@ -20,9 +20,9 @@ class Arguments:
     def __init__(self, logger):
         self.logger = logger
 
-        self.batch_size = 4
+        self.batch_size = 100
         self.test_batch_size = 1000
-        self.epochs = 200
+        self.epochs = 100
         self.lr = 0.001
         self.momentum = 0.9
         self.cuda = False
@@ -45,7 +45,8 @@ class Arguments:
         self.epoch_save_start_suffix = "start"
         self.epoch_save_end_suffix = "end"
         self.get_poison_effort = 'full'
-        self.num_workers = 50
+        self.num_workers = 100
+        self.aggregation = "fedsgd"
         # self.num_poisoned_workers = 10
 
         # self.net = Cifar10CNN
@@ -84,6 +85,9 @@ class Arguments:
 
     def get_data_path(self):
         return self.data_path
+
+    def get_aggregation_method(self):
+        return self.aggregation
 
     def get_epoch_save_start_suffix(self):
         return self.epoch_save_start_suffix

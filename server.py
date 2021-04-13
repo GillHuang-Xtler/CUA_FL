@@ -5,7 +5,7 @@ from federated_learning.arguments import Arguments
 from federated_learning.utils import generate_data_loaders_from_distributed_dataset
 from federated_learning.datasets.data_distribution import distribute_batches_equally, distribute_batches_reduce_1,distribute_batches_reduce_1_plus, distribute_batches_reduce_2_plusM,distribute_batches_reduce_2_plus, distribute_batches_reduce_3_plus, distribute_batches_reduce_3_plusM, distribute_batches_bias
 from federated_learning.utils import average_nn_parameters, fed_average_nn_parameters
-from federated_learning.utils import average_nn_parameters
+from federated_learning.utils.aggregation import krum_nn_parameters, multi_krum_nn_parameters, bulyan_nn_parameters, trmean_nn_parameters, median_nn_parameters
 from federated_learning.utils import convert_distributed_data_into_numpy
 from federated_learning.utils import poison_data
 from federated_learning.utils import identify_random_elements, identify_random_elements_inc_49
@@ -49,26 +49,6 @@ def train_subset_of_clients_new(epoch, args, clients, poisoned_workers, current_
             list(range(args.get_num_workers())),
             poisoned_workers,
             kwargs)
-    # elif epoch in [105,125,145,165,195]:
-    #     random_workers = args.get_round_worker_selection_strategy().select_round_workers_minus_1(
-    #         list(range(args.get_num_workers())),
-    #         poisoned_workers,
-    #         kwargs)
-    #     random_workers.append(49)
-
-    # elif epoch in [100, 120, 140, 160, 190]:
-    #     random_workers = args.get_round_worker_selection_strategy().select_round_workers_minus_1(
-    #         list(range(args.get_num_workers())),
-    #         poisoned_workers,
-    #         kwargs)
-    #     random_workers.append(48)
-    #
-    # elif epoch in [110, 130, 150, 170, 200]:
-    #     random_workers = args.get_round_worker_selection_strategy().select_round_workers_minus_1(
-    #         list(range(args.get_num_workers())),
-    #         poisoned_workers,
-    #         kwargs)
-    #     random_workers.append(47)
 
     else:
         random_workers = args.get_round_worker_selection_strategy().select_round_workers_distribution(
@@ -261,26 +241,6 @@ def train_subset_of_clients_sv(epoch, args, clients, poisoned_workers, current_p
             args.get_logger().info("Updating parameters on client #{}", str(client.get_client_index()))
             client.update_nn_parameters(new_nn_params)
 
-
-    # elif args.contribution_measurement_metric == 'Shapley' and 49 in random_workers:
-    #     shapley_acc, shapley_loss = contribution_evaluation.calculate_shapley_values(args, clients, random_workers, epoch)
-    #     args.get_logger().info("Shapley on clients: by acc: #{}, by loss: #{} on selected #{}, C_imb making up #{}", str(shapley_acc), str(shapley_loss), str(random_workers), str(sum(shapley_loss)))
-    #
-    #     for client in clients:
-    #         args.get_logger().info("Updating parameters on client #{}", str(client.get_client_index()))
-    #         client.update_nn_parameters(new_nn_params)
-    #
-    #     _selected_probability = [i/sum(shapley_loss) for i in shapley_loss]
-    #     selected_proba_dict = dict(zip(random_workers, _selected_probability))
-    #     for worker in selected_proba_dict.keys():
-    #         current_probability[worker] = selected_proba_dict[worker]
-    #
-    # else:
-    #     for client in clients:
-    #         args.get_logger().info("Updating parameters on client #{}", str(client.get_client_index()))
-    #         client.update_nn_parameters(new_nn_params)
-    #     current_probability = (0.3*np.random.rand(50)).tolist()
-
     print(current_probability)
     results = (clients[0].test())
     return results, random_workers, current_probability
@@ -321,10 +281,25 @@ def train_subset_of_clients(epoch, args, clients, poisoned_workers, current_dist
 
     args.get_logger().info("Averaging client parameters")
     parameters = [clients[client_idx].get_nn_parameters() for client_idx in random_workers]
-    # parameters = {client_idx: clients[client_idx].get_nn_parameters() for client_idx in random_workers}
-    # sizes = {client_idx: clients[client_idx].get_client_datasize() for client_idx in random_workers}
-    # new_nn_params = fed_average_nn_parameters(parameters, sizes)
-    new_nn_params = average_nn_parameters(parameters)
+    dict_parameters = {client_idx: clients[client_idx].get_nn_parameters() for client_idx in random_workers}
+
+    if args.get_aggregation_method() == "fedavg":
+        parameters = {client_idx: clients[client_idx].get_nn_parameters() for client_idx in random_workers}
+        sizes = {client_idx: clients[client_idx].get_client_datasize() for client_idx in random_workers}
+        new_nn_params = fed_average_nn_parameters(parameters, sizes)
+    elif args.get_aggregation_method() == "fedsgd":
+        new_nn_params = average_nn_parameters(parameters)
+    elif args.get_aggregation_method() == "krum":
+        new_nn_params = krum_nn_parameters(dict_parameters, args)
+    elif args.get_aggregation_method() == "mkrum":
+        new_nn_params = multi_krum_nn_parameters(dict_parameters, args)
+    elif args.get_aggregation_method() == "bulyan":
+        new_nn_params = bulyan_nn_parameters(dict_parameters, args)
+    elif args.get_aggregation_method() == "trmean":
+        new_nn_params = trmean_nn_parameters(parameters, args)
+    elif args.get_aggregation_method() == "median":
+        new_nn_params = median_nn_parameters(parameters, args)
+
 
     if args.contribution_measurement_metric == 'None':
         for client in clients:
@@ -391,18 +366,18 @@ def run_machine_learning(clients, args, poisoned_workers):
         # results, workers_selected = train_subset_of_clients_new(epoch, args, clients, poisoned_workers, current_distribution)
         results, workers_selected = train_subset_of_clients(epoch, args, clients, poisoned_workers, current_distribution)
         # results, workers_selected, accs = train_subset_of_clients_tifl(epoch, args, clients, poisoned_workers, accs)
-        if 49 in workers_selected:
-            _current_distribution = [i*(epoch)*100 for i in current_distribution]
-            _current_distribution = [_current_distribution[i]+_tmp1[i]*100 for i in range(10)]
-            current_distribution = norm(_current_distribution)
-        else:
-            _current_distribution = [i*(epoch)*100 for i in current_distribution]
-            _current_distribution = [_current_distribution[i]+_tmp2[i]*100 for i in range(10)]
-            current_distribution = norm(_current_distribution)
+        # if 49 in workers_selected:
+        #     _current_distribution = [i*(epoch)*100 for i in current_distribution]
+        #     _current_distribution = [_current_distribution[i]+_tmp1[i]*100 for i in range(10)]
+        #     current_distribution = norm(_current_distribution)
+        # else:
+        #     _current_distribution = [i*(epoch)*100 for i in current_distribution]
+        #     _current_distribution = [_current_distribution[i]+_tmp2[i]*100 for i in range(10)]
+        #     current_distribution = norm(_current_distribution)
         # print('current_distribution:'+ str(current_distribution))
-        # _selected_distribution = [clients[idx].get_client_distribution() for idx in workers_selected]
-        # selected_distribution = np.sum([i for i in _selected_distribution], axis = 0)
-        # current_distribution = [current_distribution[i]+selected_distribution[i] for i in range(len(current_distribution))]
+        _selected_distribution = [clients[idx].get_client_distribution() for idx in workers_selected]
+        selected_distribution = np.sum([i for i in _selected_distribution], axis = 0)
+        current_distribution = [current_distribution[i]+selected_distribution[i] for i in range(len(current_distribution))]
         # torch.cuda.synchronize()
         epoch_test_set_results.append(results)
         worker_selection.append(workers_selected)
@@ -428,8 +403,8 @@ def run_exp(replacement_method, num_poisoned_workers, KWARGS, client_selection_s
     test_data_loader = load_test_data_loader(logger, args)
 
     # Distribute batches equal volume IID
-    # distributed_train_dataset = distribute_batches_equally(train_data_loader, args.get_num_workers())
-    distributed_train_dataset = distribute_batches_bias(train_data_loader, args.get_num_workers())
+    distributed_train_dataset = distribute_batches_equally(train_data_loader, args.get_num_workers())
+    # distributed_train_dataset = distribute_batches_bias(train_data_loader, args.get_num_workers())
     distributed_train_dataset = convert_distributed_data_into_numpy(distributed_train_dataset)
 
     poisoned_workers = identify_random_elements(args.get_num_workers(), args.get_num_poisoned_workers())

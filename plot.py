@@ -477,7 +477,16 @@ if __name__ =='__main__':
     # plt_class_recall_1()
     # plt_utility()
     # sub_plot()
-    path1 = './res/2881_results.csv'
+    path0 = './res/40400_results.csv'
+    filename0 = path0
+    X0 = []
+    with open(filename0, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X0.append(value[0])
+
+    path1 = './res/4025_results.csv'
     filename1 = path1
     X1 = []
     with open(filename1, 'r') as f:
@@ -485,7 +494,7 @@ if __name__ =='__main__':
         for line in lines:
             value = [float(s) for s in line.split(',')]
             X1.append(value[0])
-    path2 = './res/2881_results.csv'
+    path2 = './res/4021_results.csv'
     filename2 = path2
     X2 = []
     with open(filename2, 'r') as f:
@@ -493,8 +502,7 @@ if __name__ =='__main__':
         for line in lines:
             value = [float(s) for s in line.split(',')]
             X2.append(value[0])
-
-    path3 = './res/1171_results.csv'
+    path3 = './res/4022_results.csv'
     filename3 = path3
     X3 = []
     with open(filename3, 'r') as f:
@@ -503,10 +511,37 @@ if __name__ =='__main__':
             value = [float(s) for s in line.split(',')]
             X3.append(value[0])
 
+    filename4 = './res/4026_results.csv'
+    X4 = []
+    with open(filename4, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X4.append(value[0])
 
-    # plt.plot(X1, color='brown', label='avg', linewidth = '1')
-    plt.plot(X2, color='blue', label='het', linewidth = '1')
-    plt.plot(X3, color='green', label='iid', linewidth = '1')
+    filename5 = './res/4041_results.csv'
+    X5 = []
+    with open(filename5, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X5.append(value[0])
+
+    filename6 = './res/4042_results.csv'
+    X6 = []
+    with open(filename6, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X6.append(value[0])
+
+    plt.plot(X0, color='blue', label='IID', linewidth = '1')
+    # plt.plot(X1, color='black', label='lf', linewidth = '1')
+    # plt.plot(X2, label='krum', linewidth = '1')
+    # plt.plot(X3, label='mkrum', linewidth = '1')
+    # plt.plot(X4, label='bulyan', linewidth = '1')
+    # plt.plot(X5, label='trmean', linewidth = '1')
+    # plt.plot(X6, label='median', linewidth = '1')
 
     plt.xlabel('GLOBAL ROUNDS')
     plt.ylabel('ACCURACY')
