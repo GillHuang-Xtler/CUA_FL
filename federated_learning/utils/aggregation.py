@@ -186,3 +186,44 @@ def median_nn_parameters(parameters, args):
         new_params[name] = median_data
 
     return new_params
+
+def fgold_nn_parameters(dict_parameters, args):
+    """
+    median of passed parameters.
+
+    :param parameters: nn model named parameters
+    :type parameters: list
+    """
+    args.get_logger().info("Averaging parameters on fools gold")
+    distances = {}
+    tmp_parameters = {}
+    candidate_num = args.get_num_workers()/10 - args.get_num_poisoned_workers() +1
+
+    for idx, parameter in dict_parameters.items():
+        distance = []
+        for _idx, _parameter in dict_parameters.items():
+            dis = [torch.norm((parameter[name].data - _parameter[name].data).float())**2 for name in parameter.keys()]
+            # if sum(dis) < args.get_similarity_epsilon() and sum(dis) != 0 :
+            #     distance.append(10000)
+            #     args.get_logger().info("small distance as #{}", str(sum(dis)))
+            distance.append(sum(dis))
+            tmp_parameters[idx] = parameter
+        # distance = sum(torch.Tensor(distance).float())
+        distance.sort()
+        distances[idx] = sum(distance)
+    args.get_logger().info("Distances #{} on client #{}", str(distances.values()),
+                           str(distances.keys()))
+    sorted_distance = dict(sorted(distances.items(), key=lambda item: item[1]))
+    # sorted_distance = dict((k, v) for k, v in sorted_distance.items() if v >= 10000)
+    candidate_parameters = [tmp_parameters[idx] for idx in sorted_distance.keys()][1:]
+    args.get_logger().info("Averaging parameters on client #{}", str(list(sorted_distance.keys())[1:]))
+
+    new_params = {}
+    for name in candidate_parameters[0].keys():
+        tmp = []
+        for param in candidate_parameters:
+            tmp.append(param[name].data)
+        median_data = torch.median(torch.stack(tmp), 0)[0]
+        new_params[name] = median_data
+
+    return new_params

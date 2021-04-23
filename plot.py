@@ -477,7 +477,7 @@ if __name__ =='__main__':
     # plt_class_recall_1()
     # plt_utility()
     # sub_plot()
-    path0 = './res/40400_results.csv'
+    path0 = './res/4024_results.csv'
     filename0 = path0
     X0 = []
     with open(filename0, 'r') as f:
@@ -535,13 +535,22 @@ if __name__ =='__main__':
             value = [float(s) for s in line.split(',')]
             X6.append(value[0])
 
+    filename7 = './res/4141_results.csv'
+    X7 = []
+    with open(filename7, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X7.append(value[0])
+
     plt.plot(X0, color='blue', label='IID', linewidth = '1')
-    # plt.plot(X1, color='black', label='lf', linewidth = '1')
-    # plt.plot(X2, label='krum', linewidth = '1')
-    # plt.plot(X3, label='mkrum', linewidth = '1')
-    # plt.plot(X4, label='bulyan', linewidth = '1')
-    # plt.plot(X5, label='trmean', linewidth = '1')
-    # plt.plot(X6, label='median', linewidth = '1')
+    plt.plot(X1, color='black', label='lf', linewidth = '1')
+    plt.plot(X2, label='krum', linewidth = '1')
+    plt.plot(X3, label='mkrum', linewidth = '1')
+    plt.plot(X4, label='bulyan', linewidth = '1')
+    plt.plot(X5, label='trmean', linewidth = '1')
+    plt.plot(X6, label='median', linewidth = '1')
+    plt.plot(X7, label='fgold', linewidth = '1')
 
     plt.xlabel('GLOBAL ROUNDS')
     plt.ylabel('ACCURACY')

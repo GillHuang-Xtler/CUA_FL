@@ -23,3 +23,4 @@
 - 4041： fashion-trmean-lf-100-10-10-100-s
 - 4042： fashion-median-lf-100-10-10-100-s
 - 40400： fashion-sgd-lf-100-100-10-100-s
+- 4141： fashion-fgold-lf-100-10-10-100-s

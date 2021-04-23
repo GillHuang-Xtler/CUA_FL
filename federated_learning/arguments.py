@@ -20,7 +20,7 @@ class Arguments:
     def __init__(self, logger):
         self.logger = logger
 
-        self.batch_size = 100
+        self.batch_size = 4
         self.test_batch_size = 1000
         self.epochs = 100
         self.lr = 0.001
@@ -34,6 +34,7 @@ class Arguments:
         self.scheduler_step_size = 10
         self.scheduler_gamma = 0.1
         self.min_lr = 1e-10
+        self.similarity_epsilon = 0.0005
 
         self.round_worker_selection_strategy = None
         self.round_worker_selection_strategy_kwargs = None
@@ -46,7 +47,7 @@ class Arguments:
         self.epoch_save_end_suffix = "end"
         self.get_poison_effort = 'full'
         self.num_workers = 100
-        self.aggregation = "fedsgd"
+        self.aggregation = "fgold"
         # self.num_poisoned_workers = 10
 
         # self.net = Cifar10CNN
@@ -100,6 +101,10 @@ class Arguments:
 
     def get_train_data_loader_pickle_path(self):
         return self.train_data_loader_pickle_path
+
+    def get_similarity_epsilon(self):
+        return self.similarity_epsilon
+
 
     def set_test_data_loader_pickle_path(self, path):
         self.test_data_loader_pickle_path = path
