@@ -227,3 +227,20 @@ def fgold_nn_parameters(dict_parameters, args):
         new_params[name] = median_data
 
     return new_params
+
+def flip_nn_parameters(parameters,args):
+    """
+    Averages passed parameters.
+
+    :param parameters: nn model named parameters
+    :type parameters: list
+    """
+
+    args.get_logger().info("Averaging parameters on model flipping attackers")
+    new_params = {}
+    for name in parameters[0].keys():
+        new_params[name] = sum([param[name].data for param in parameters[:-1]])
+        new_params[name] -= (parameters[-1][name].data) * args.get_num_attackers()
+        new_params[name] /= (len(parameters) + args.get_num_attackers())
+
+    return new_params

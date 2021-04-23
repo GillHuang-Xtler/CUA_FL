@@ -42,6 +42,12 @@ def generate_train_loader(args, dataset):
 
     return dataset.get_data_loader_from_data(args.get_batch_size(), X, Y)
 
+def generate_train_loader_sample(args, dataset):
+    train_dataset = dataset.get_train_dataset()
+    X, Y = shuffle_data_sample(args, train_dataset)
+
+    return dataset.get_data_loader_from_data(args.get_batch_size(), X, Y)
+
 def load_test_data_loader(logger, args):
     """
     Loads the test data DataLoader object from a file if available.
@@ -73,6 +79,16 @@ def generate_test_loader(args, dataset):
     X, Y = shuffle_data(args, test_dataset)
 
     return dataset.get_data_loader_from_data(args.get_test_batch_size(), X, Y)
+
+def shuffle_data_sample(args, dataset):
+    data = list(zip(dataset[0], dataset[1]))
+    random.shuffle(data)
+    X, Y = zip(*data)
+    X = numpy.asarray(X)
+    Y = numpy.asarray(Y)
+    print(type(X), len(Y))
+
+    return X[:6000], Y[:6000]
 
 def shuffle_data(args, dataset):
     data = list(zip(dataset[0], dataset[1]))

@@ -24,3 +24,4 @@
 - 4042： fashion-median-lf-100-10-10-100-s
 - 40400： fashion-sgd-lf-100-100-10-100-s
 - 4141： fashion-fgold-lf-100-10-10-100-s
+- 4231： fashion-sgd-lf-100-100-0-100-batch64

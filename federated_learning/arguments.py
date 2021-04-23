@@ -20,7 +20,7 @@ class Arguments:
     def __init__(self, logger):
         self.logger = logger
 
-        self.batch_size = 4
+        self.batch_size = 64
         self.test_batch_size = 1000
         self.epochs = 100
         self.lr = 0.001
@@ -47,7 +47,8 @@ class Arguments:
         self.epoch_save_end_suffix = "end"
         self.get_poison_effort = 'full'
         self.num_workers = 100
-        self.aggregation = "fgold"
+        self.aggregation = "fedsgd"
+        self.num_attackers = 0
         # self.num_poisoned_workers = 10
 
         # self.net = Cifar10CNN
@@ -62,6 +63,9 @@ class Arguments:
         #
         self.train_data_loader_pickle_path = "data_loaders/fashion-mnist/train_data_loader.pickle"
         self.test_data_loader_pickle_path = "data_loaders/fashion-mnist/test_data_loader.pickle"
+
+        # self.train_data_loader_pickle_path = "data_loaders/fashion-mnist-sample/train_data_loader.pickle"
+        # self.test_data_loader_pickle_path = "data_loaders/fashion-mnist-sample/test_data_loader.pickle"
 
         # self.train_data_loader_pickle_path = "data_loaders/cifar100/train_data_loader.pickle"
         # self.test_data_loader_pickle_path = "data_loaders/cifar100/test_data_loader.pickle"
@@ -129,6 +133,9 @@ class Arguments:
 
     def get_num_epochs(self):
         return self.epochs
+
+    def get_num_attackers(self):
+        return self.num_attackers
 
     def set_num_poisoned_workers(self, num_poisoned_workers):
         self.num_poisoned_workers = num_poisoned_workers
