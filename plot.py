@@ -471,12 +471,18 @@ def sub_plot():
     plt.legend()
     plt.show()
 
-if __name__ =='__main__':
-    # plt_txt()
-    # plt_acc()
-    # plt_class_recall_1()
-    # plt_utility()
-    # sub_plot()
+def plt_atk_bar():
+    X1 = [13.7, 31.7, 40.6, 38.7 ,34.1,  22.2 , 42.1 , 10.2]
+    X2 = [30.2, 30.4, 41.1, 27.9, 39.5 , 16.0 ,19.9, 10.2]
+    X3 = [1.1, 79.5, 18.7, 24.7, 19.8, 74, 78.3, 0.8]
+    index_ls = ['Krum', 'MKrum', 'Bulyan', 'TrMean', 'Median', 'AFA', 'FTrmean', "FoolsG"]
+    plt.bar(index_ls, X3)
+    plt.xlabel('Defenses')
+    plt.ylabel('Attacking Successful Rate')
+    plt.legend()
+    plt.show()
+
+def plt_agg_comp():
     path0 = './res/4024_results.csv'
     filename0 = path0
     X0 = []
@@ -551,9 +557,98 @@ if __name__ =='__main__':
     plt.plot(X5, label='trmean', linewidth = '1')
     plt.plot(X6, label='median', linewidth = '1')
     plt.plot(X7, label='fgold', linewidth = '1')
+    plt.xlabel('GLOBAL ROUNDS')
+    plt.ylabel('ACCURACY')
+    plt.legend()
+    plt.show()
+
+def plt_reverse():
+    path0 = './res/4024_results.csv'
+    filename0 = path0
+    X0 = []
+    with open(filename0, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X0.append(value[0])
+
+    path1 = './res/4025_results.csv'
+    filename1 = path1
+    X1 = []
+    with open(filename1, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X1.append(value[0])
+
+    filename2 = './res/5081_results.csv'
+    X2 = []
+    with open(filename2, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X2.append(value[0])
+
+    filename3 = './res/5082_results.csv'
+    X3 = []
+    with open(filename3, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X3.append(value[0])
+
+    filename4 = './res/5084_results.csv'
+    X4 = []
+    with open(filename4, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X4.append(value[0])
+
+    filename5 = './res/5083_results.csv'
+    X5 = []
+    with open(filename5, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X5.append(value[0])
+
+    filename6 = './res/5102_results.csv'
+    X6 = []
+    with open(filename6, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X6.append(value[0])
+
+    filename7 = './res/5121_results.csv'
+    X7 = []
+    with open(filename7, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X7.append(value[0])
+
+    plt.plot(X0, label='IID', linewidth = '1')
+    plt.plot(X1, label='labelFlip', linewidth = '1')
+    plt.plot(X2, label='reverseAll_1', linewidth = '1')
+    # plt.plot(X5, label='reverse5_1', linewidth = '1')
+    plt.plot(X4, label='reverse3_1', linewidth = '1')
+    plt.plot(X6, label='reverseAllG_1', linewidth = '1')
+    plt.plot(X7, label='reverseAllG_2', linewidth = '1')
+
 
     plt.xlabel('GLOBAL ROUNDS')
     plt.ylabel('ACCURACY')
-    # plt.ylim([60,95])
+    plt.ylim(50)
     plt.legend()
     plt.show()
+
+if __name__ =='__main__':
+    # plt_txt()
+    # plt_acc()
+    # plt_class_recall_1()
+    # plt_utility()
+    # plt_atk_bar()
+    # plt_agg_comp()
+    plt_reverse()

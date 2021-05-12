@@ -9,12 +9,12 @@ from federated_learning.worker_selection import RandomSelectionStrategy
 from server import run_exp
 
 if __name__ == '__main__':
-    START_EXP_IDX = 4231
+    START_EXP_IDX = 5121
     NUM_EXP = 1
     NUM_POISONED_WORKERS = 0
-    REPLACEMENT_METHOD = replace_0_with_2
+    REPLACEMENT_METHOD = default_no_change
     KWARGS = {
-        "NUM_WORKERS_PER_ROUND" : 100
+        "NUM_WORKERS_PER_ROUND" : 10
     }
 
     for experiment_id in range(START_EXP_IDX, START_EXP_IDX + NUM_EXP):

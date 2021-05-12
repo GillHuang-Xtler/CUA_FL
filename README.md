@@ -1,3 +1,4 @@
+- number:data-aggregation-poison-clients-participants-attacker-round
 - 3290： fashion-sgd-none-100-d
 - 3291： fashion-sgd-lf20-100-d
 - 3292： fashion-sgd-lf40-100-d
@@ -24,4 +25,14 @@
 - 4042： fashion-median-lf-100-10-10-100-s
 - 40400： fashion-sgd-lf-100-100-10-100-s
 - 4141： fashion-fgold-lf-100-10-10-100-s
-- 4231： fashion-sgd-lf-100-100-0-100-batch64
+- 4231： fashion-sgd-none-100-100-0-100-batch64
+- 4241： fashion-sgd-none-100-10-0-100
+- 4242： fashion-sgd-flip-100-10-1-100
+- 5071： fashion-sgd-none-100-5-0-100
+- 5081： fashion-sgd-reverse-100-10-1-100
+- 5082： fashion-sgd-reverse-100-10-2-100
+- 5083： fashion-sgd-reverse5-100-10-1-100
+- 5084： fashion-sgd-reverse3-100-10-1-100
+- 5101： fashion-sgd-none-100-10-0-100-test for gradient aggregation test
+- 5102： fashion-sgd-none-100-10-1-100 for gradient aggregation
+- 5121： fashion-sgd-none-100-10-2-100 for gradient aggregation

@@ -20,7 +20,7 @@ class Arguments:
     def __init__(self, logger):
         self.logger = logger
 
-        self.batch_size = 64
+        self.batch_size = 4
         self.test_batch_size = 1000
         self.epochs = 100
         self.lr = 0.001
@@ -47,8 +47,10 @@ class Arguments:
         self.epoch_save_end_suffix = "end"
         self.get_poison_effort = 'full'
         self.num_workers = 100
-        self.aggregation = "fedsgd"
-        self.num_attackers = 0
+        self.aggregation = "reverse"
+        self.num_attackers = 2
+        self.dev_type = 'sign'
+        self.num_reverse_layers = 5
         # self.num_poisoned_workers = 10
 
         # self.net = Cifar10CNN
@@ -119,6 +121,9 @@ class Arguments:
     def get_cuda(self):
         return self.cuda
 
+    def get_dev_type(self):
+        return self.dev_type
+
     def get_scheduler_step_size(self):
         return self.scheduler_step_size
 
@@ -163,6 +168,9 @@ class Arguments:
 
     def get_poison_effort(self):
         return self.get_poison_effort
+
+    def get_num_reverse_layers(self):
+        return self.num_reverse_layers
 
     def get_learning_rate(self):
         return self.lr
