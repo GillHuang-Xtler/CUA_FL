@@ -83,10 +83,7 @@ def krum_nn_parameters(dict_parameters, args):
     :param dict_parameters: nn model named parameters with client index
     :type parameters: list
     """
-    from torch.nn import functional as F
-    import numpy as np
 
-    # candidate_num = args.get_num_workers() - int(args.get_num_poisoned_workers()/2) -2
     args.get_logger().info("Averaging parameters on krum")
 
     candidate_num = 6

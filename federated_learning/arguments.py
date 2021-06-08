@@ -47,11 +47,13 @@ class Arguments:
         self.epoch_save_end_suffix = "end"
         self.get_poison_effort = 'full'
         self.num_workers = 100
-        self.aggregation = "reverse"
-        self.num_attackers = 2
+        self.aggregation = "fedsgd"
+        self.num_attackers = 0
         self.dev_type = 'sign'
         self.num_reverse_layers = 5
         # self.num_poisoned_workers = 10
+
+        self.distribution_method = "noniid_2"
 
         # self.net = Cifar10CNN
         # self.net = Cifar10ResNet
@@ -59,6 +61,8 @@ class Arguments:
         # self.net = FashionMNISTResNet
         # self.net = Cifar100ResNet
         # self.net = Cifar100VGG
+
+        self.num_classes = 10
 
         # self.train_data_loader_pickle_path = "data_loaders/cifar10/train_data_loader.pickle"
         # self.test_data_loader_pickle_path = "data_loaders/cifar10/test_data_loader.pickle"
@@ -95,6 +99,9 @@ class Arguments:
 
     def get_aggregation_method(self):
         return self.aggregation
+
+    def get_distribution_method(self):
+        return self.distribution_method
 
     def get_epoch_save_start_suffix(self):
         return self.epoch_save_start_suffix
@@ -141,6 +148,9 @@ class Arguments:
 
     def get_num_attackers(self):
         return self.num_attackers
+
+    def get_num_classes(self):
+        return self.num_classes
 
     def set_num_poisoned_workers(self, num_poisoned_workers):
         self.num_poisoned_workers = num_poisoned_workers

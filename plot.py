@@ -644,6 +644,42 @@ def plt_reverse():
     plt.legend()
     plt.show()
 
+def plt_non_iid():
+    path0 = './res/4024_results.csv'
+    filename0 = path0
+    X0 = []
+    with open(filename0, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X0.append(value[0])
+
+    path1 = './res/5141_results.csv'
+    filename1 = path1
+    X1 = []
+    with open(filename1, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X1.append(value[0])
+
+    filename2 = './res/5151_results.csv'
+    X2 = []
+    with open(filename2, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X2.append(value[0])
+
+    plt.plot(X0, label='IID', linewidth = '1')
+    plt.plot(X1, label='1-class', linewidth = '1')
+    plt.plot(X2, label='2-class', linewidth = '1')
+    plt.xlabel('GLOBAL ROUNDS')
+    plt.ylabel('ACCURACY')
+    # plt.ylim(50)
+    plt.legend()
+    plt.show()
+
 if __name__ =='__main__':
     # plt_txt()
     # plt_acc()
@@ -651,4 +687,5 @@ if __name__ =='__main__':
     # plt_utility()
     # plt_atk_bar()
     # plt_agg_comp()
-    plt_reverse()
+    # plt_reverse()
+    plt_non_iid()

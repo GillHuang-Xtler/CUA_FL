@@ -1,4 +1,4 @@
-- number:data-aggregation-poison-clients-participants-attacker-round
+- number:data-distribution(default:iid)-aggregation-poison-clients-participants-attacker-round
 - 3290： fashion-sgd-none-100-d
 - 3291： fashion-sgd-lf20-100-d
 - 3292： fashion-sgd-lf40-100-d
@@ -36,3 +36,5 @@
 - 5101： fashion-sgd-none-100-10-0-100-test for gradient aggregation test
 - 5102： fashion-sgd-none-100-10-1-100 for gradient aggregation
 - 5121： fashion-sgd-none-100-10-2-100 for gradient aggregation
+- 5141： fashion-non1-sgd-none-100-10-0-100
+- 5151： fashion-non2-sgd-none-100-10-0-100

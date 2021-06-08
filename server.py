@@ -3,7 +3,7 @@ import torch
 import time
 from federated_learning.arguments import Arguments
 from federated_learning.utils import generate_data_loaders_from_distributed_dataset
-from federated_learning.datasets.data_distribution import distribute_batches_equally, distribute_batches_reduce_1,distribute_batches_reduce_1_plus, distribute_batches_reduce_2_plusM,distribute_batches_reduce_2_plus, distribute_batches_reduce_3_plus, distribute_batches_reduce_3_plusM, distribute_batches_bias
+from federated_learning.datasets.data_distribution import distribute_batches_equally, distribute_batches_reduce_1,distribute_batches_reduce_1_plus, distribute_batches_reduce_2_plusM,distribute_batches_reduce_2_plus, distribute_batches_reduce_3_plus, distribute_batches_reduce_3_plusM, distribute_batches_bias, distribute_batches_1_class, distribute_batches_2_class
 from federated_learning.utils import average_nn_parameters, fed_average_nn_parameters
 from federated_learning.utils.aggregation import krum_nn_parameters, multi_krum_nn_parameters, bulyan_nn_parameters, trmean_nn_parameters, median_nn_parameters, fgold_nn_parameters, reverse_nn_parameters, ndss_nn_parameters, reverse_last_parameters
 from federated_learning.utils import convert_distributed_data_into_numpy
@@ -414,9 +414,18 @@ def run_exp(replacement_method, num_poisoned_workers, KWARGS, client_selection_s
 
     test_data_loader = load_test_data_loader(logger, args)
 
-    # Distribute batches equal volume IID
-    distributed_train_dataset = distribute_batches_equally(train_data_loader, args.get_num_workers())
-    # distributed_train_dataset = distribute_batches_bias(train_data_loader, args.get_num_workers())
+    # Distribute batches
+
+    if args.get_distribution_method() == "bias":
+        distributed_train_dataset = distribute_batches_bias(train_data_loader, args.get_num_workers())
+    elif args.get_distribution_method() == "noniid_1":
+        distributed_train_dataset = distribute_batches_1_class(train_data_loader, args.get_num_workers(), args = args)
+    elif args.get_distribution_method() == "noniid_2":
+        distributed_train_dataset = distribute_batches_2_class(train_data_loader, args.get_num_workers(), args = args)
+    else:
+        distributed_train_dataset = distribute_batches_equally(train_data_loader, args.get_num_workers())
+
+
     distributed_train_dataset = convert_distributed_data_into_numpy(distributed_train_dataset)
 
     poisoned_workers = identify_random_elements(args.get_num_workers(), args.get_num_poisoned_workers())
