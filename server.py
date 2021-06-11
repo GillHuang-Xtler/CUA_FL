@@ -5,7 +5,8 @@ from federated_learning.arguments import Arguments
 from federated_learning.utils import generate_data_loaders_from_distributed_dataset
 from federated_learning.datasets.data_distribution import distribute_batches_equally, distribute_batches_reduce_1,distribute_batches_reduce_1_plus, distribute_batches_reduce_2_plusM,distribute_batches_reduce_2_plus, distribute_batches_reduce_3_plus, distribute_batches_reduce_3_plusM, distribute_batches_bias, distribute_batches_1_class, distribute_batches_2_class
 from federated_learning.utils import average_nn_parameters, fed_average_nn_parameters
-from federated_learning.utils.aggregation import krum_nn_parameters, multi_krum_nn_parameters, bulyan_nn_parameters, trmean_nn_parameters, median_nn_parameters, fgold_nn_parameters, reverse_nn_parameters, ndss_nn_parameters, reverse_last_parameters
+from federated_learning.utils.aggregation import krum_nn_parameters, multi_krum_nn_parameters, bulyan_nn_parameters, trmean_nn_parameters, median_nn_parameters, fgold_nn_parameters
+from federated_learning.utils.attack import reverse_nn_parameters, ndss_nn_parameters, reverse_last_parameters
 from federated_learning.utils import convert_distributed_data_into_numpy
 from federated_learning.utils import poison_data
 from federated_learning.utils import identify_random_elements, identify_random_elements_inc_49
@@ -274,6 +275,7 @@ def train_subset_of_clients(epoch, args, clients, poisoned_workers, current_dist
             poisoned_workers,
             kwargs)
 
+    previous_weight = []
     for client_idx in random_workers:
         args.get_logger().info("Training epoch #{} on client #{}", str(epoch),
                                str(clients[client_idx].get_client_index()))
@@ -282,12 +284,22 @@ def train_subset_of_clients(epoch, args, clients, poisoned_workers, current_dist
 
     args.get_logger().info("Averaging client parameters")
     parameters = [clients[client_idx].get_nn_parameters() for client_idx in random_workers]
-    # if args.get_num_attackers() > 0 :
-    #     for attacker_idx in range(5)[- args.get_num_attackers():]:
-    #         for name in parameters[0].keys():
-    #             parameters[attacker_idx][name].data = - parameters[attacker_idx][name].data
     dict_parameters = {client_idx: clients[client_idx].get_nn_parameters() for client_idx in random_workers}
 
+    # attacks
+
+    if args.get_attack_strategy() == "None":
+        parameters = parameters
+    elif args.get_attack_strategy() == "reverse":
+        parameters = reverse_nn_parameters(parameters, previous_weight, args)
+    elif args.get_attack_strategy() == "reverse_1":
+        parameters = reverse_last_parameters(parameters, previous_weight, args)
+    elif args.get_attack_strategy() == "ndss":
+        parameters = ndss_nn_parameters(parameters, args)
+
+    # defenses
+
+    new_nn_params = {}
     if args.get_aggregation_method() == "fedavg":
         parameters = {client_idx: clients[client_idx].get_nn_parameters() for client_idx in random_workers}
         sizes = {client_idx: clients[client_idx].get_client_datasize() for client_idx in random_workers}
@@ -297,21 +309,18 @@ def train_subset_of_clients(epoch, args, clients, poisoned_workers, current_dist
     elif args.get_aggregation_method() == "krum":
         new_nn_params = krum_nn_parameters(dict_parameters, args)
     elif args.get_aggregation_method() == "mkrum":
+        dict_parameters = {client_idx: clients[client_idx].get_nn_parameters() for client_idx in random_workers}
         new_nn_params = multi_krum_nn_parameters(dict_parameters, args)
     elif args.get_aggregation_method() == "bulyan":
+        dict_parameters = {client_idx: clients[client_idx].get_nn_parameters() for client_idx in random_workers}
         new_nn_params = bulyan_nn_parameters(dict_parameters, args)
     elif args.get_aggregation_method() == "trmean":
         new_nn_params = trmean_nn_parameters(parameters, args)
     elif args.get_aggregation_method() == "median":
         new_nn_params = median_nn_parameters(parameters, args)
     elif args.get_aggregation_method() == "fgold":
+        dict_parameters = {client_idx: clients[client_idx].get_nn_parameters() for client_idx in random_workers}
         new_nn_params = fgold_nn_parameters(dict_parameters, args)
-    elif args.get_aggregation_method() == "reverse":
-        new_nn_params = reverse_nn_parameters(parameters, previous_weight, args)
-    elif args.get_aggregation_method() == "reverse_1":
-        new_nn_params = reverse_last_parameters(parameters, previous_weight, args)
-    elif args.get_aggregation_method() == "ndss":
-        new_nn_params = ndss_nn_parameters(parameters, args)
 
     if args.contribution_measurement_metric == 'None':
         for client in clients:

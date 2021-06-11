@@ -19,7 +19,7 @@ class STL10Dataset(Dataset):
             transforms.ToTensor(),
             normalize
         ])
-        train_dataset = datasets.stl10(root=self.get_args().get_data_path(), train=True, download=True, transform=transform)
+        train_dataset = datasets.STL10(root=self.get_args().get_data_path(), split='train', download=True, transform=transform)
         train_loader = DataLoader(train_dataset, batch_size=len(train_dataset))
 
         train_data = self.get_tuple_from_data_loader(train_loader)
@@ -36,7 +36,7 @@ class STL10Dataset(Dataset):
             transforms.ToTensor(),
             normalize
         ])
-        test_dataset = datasets.stl10(root=self.get_args().get_data_path(), train=False, download=True, transform=transform)
+        test_dataset = datasets.STL10(root=self.get_args().get_data_path(), split='test', download=True, transform=transform)
         test_loader = DataLoader(test_dataset, batch_size=len(test_dataset))
 
         test_data = self.get_tuple_from_data_loader(test_loader)

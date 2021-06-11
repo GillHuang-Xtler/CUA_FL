@@ -48,6 +48,7 @@ class Arguments:
         self.get_poison_effort = 'full'
         self.num_workers = 100
         self.aggregation = "fedsgd"
+        self.attack = "None"
         self.num_attackers = 0
         self.dev_type = 'sign'
         self.num_reverse_layers = 5
@@ -66,9 +67,9 @@ class Arguments:
 
         # self.train_data_loader_pickle_path = "data_loaders/cifar10/train_data_loader.pickle"
         # self.test_data_loader_pickle_path = "data_loaders/cifar10/test_data_loader.pickle"
-        #
-        self.train_data_loader_pickle_path = "data_loaders/fashion-mnist/train_data_loader.pickle"
-        self.test_data_loader_pickle_path = "data_loaders/fashion-mnist/test_data_loader.pickle"
+
+        # self.train_data_loader_pickle_path = "data_loaders/fashion-mnist/train_data_loader.pickle"
+        # self.test_data_loader_pickle_path = "data_loaders/fashion-mnist/test_data_loader.pickle"
 
         # self.train_data_loader_pickle_path = "data_loaders/fashion-mnist-sample/train_data_loader.pickle"
         # self.test_data_loader_pickle_path = "data_loaders/fashion-mnist-sample/test_data_loader.pickle"
@@ -99,6 +100,9 @@ class Arguments:
 
     def get_aggregation_method(self):
         return self.aggregation
+
+    def get_attack_strategy(self):
+        return self.attack
 
     def get_distribution_method(self):
         return self.distribution_method

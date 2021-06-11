@@ -4,7 +4,7 @@ from federated_learning.nets import Cifar100ResNet
 from federated_learning.nets import FashionMNISTCNN
 from federated_learning.nets import FashionMNISTResNet
 from federated_learning.nets import Cifar10ResNet
-from federated_learning.nets import Cifar100VGG
+from federated_learning.nets import Cifar100VGG, STL10VGG, MNISTCNN
 # from federated_learning.nets import TRECCNN
 import os
 import torch
@@ -55,3 +55,15 @@ if __name__ == '__main__':
     # # ---------------------------------
     # full_save_path = os.path.join(args.get_default_model_folder_path(), "TRECCNN.model")
     # torch.save(TRECCNN().state_dict(), full_save_path)
+
+    # ---------------------------------
+    # ----------- MNISTCNN ------------
+    # ---------------------------------
+    full_save_path = os.path.join(args.get_default_model_folder_path(), "MNISTCNN.model")
+    torch.save(MNISTCNN().state_dict(), full_save_path)
+
+    # ---------------------------------
+    # ----------- STL10VGG ------------
+    # ---------------------------------
+    full_save_path = os.path.join(args.get_default_model_folder_path(), "STL10VGG.model")
+    torch.save(STL10VGG().state_dict(), full_save_path)
