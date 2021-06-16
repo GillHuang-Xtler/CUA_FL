@@ -1,5 +1,5 @@
 import torch
-
+import numpy as np
 
 def reverse_nn_parameters(parameters, previous_weight, args):
     """
@@ -11,10 +11,10 @@ def reverse_nn_parameters(parameters, previous_weight, args):
 
     args.get_logger().info("Reverse all layers of gradients from attackers")
     new_parameters = []
-    for params in parameters[:len(parameters)-args.get_num_attackers]:
+    for params in parameters[:len(parameters)-args.get_num_attackers()]:
         new_parameters.append(params)
 
-    for params in parameters[len(parameters)-args.get_num_attackers:]:
+    for params in parameters[len(parameters)-args.get_num_attackers():]:
         for name in parameters[0].keys():
             params[name] = (2*previous_weight[name].data - params[name].data) * args.get_num_attackers()
         new_parameters.append(params)
@@ -36,10 +36,10 @@ def reverse_last_parameters(parameters, previous_weight, args):
     args.get_logger().info("Reverse last layers of gradients from attackers")
     layers = list(parameters[0].keys())
     new_parameters = []
-    for params in parameters[:len(parameters)-args.get_num_attackers]:
+    for params in parameters[:len(parameters)-args.get_num_attackers()]:
         new_parameters.append(params)
 
-    for params in parameters[len(parameters)-args.get_num_attackers:]:
+    for params in parameters[len(parameters)-args.get_num_attackers():]:
         for name in parameters[0].keys():
             if name in layers[-(args.get_num_reverse_layers()):]:
                 params[name] = (2*previous_weight[name].data - params[name].data) * args.get_num_attackers()
@@ -57,6 +57,39 @@ def reverse_last_parameters(parameters, previous_weight, args):
     #         new_params[name] = sum([param[name].data for param in parameters]) / len(parameters)
     return new_parameters
 
+def lie_nn_parameters(parameters, args):
+    """
+    generate lie parameters.
+
+    :param parameters: nn model named parameters
+    :type parameters: list
+    """
+
+    args.get_logger().info("Averaging parameters on model lie attackers")
+    new_parameters = []
+    for params in parameters[:len(parameters)-args.get_num_attackers()]:
+        new_parameters.append(params)
+
+    z_value = args.get_lie_z_value()
+    mean_params = {}
+    std_params = {}
+    for name in parameters[0].keys():
+        mean_params[name] = sum([param[name].data for param in parameters])/len(parameters)
+        _std_params = []
+        for param in parameters:
+            _std_params.append(param[name].data)
+        val = torch.stack(_std_params, 0)
+        std_params[name] = torch.std(val.float())
+
+    mal_param = {}
+    for name in parameters[0].keys():
+        mal_param[name] = mean_params[name] + z_value[args.get_num_attackers()] * std_params[name]
+
+    new_parameters.append(mal_param)
+
+    return new_parameters
+
+
 def ndss_nn_parameters(parameters,args):
     """
     generate ndss parameters.
@@ -64,10 +97,11 @@ def ndss_nn_parameters(parameters,args):
     :param parameters: nn model named parameters
     :type parameters: list
     """
+    import numpy as np
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     args.get_logger().info("Averaging parameters on model ndss attackers")
 
-    model_re = parameters[-1]
+    model_re =torch.from_numpy(np.array(parameters[-1].values()).astype(float))
     all_updates = parameters[:-1]
 
     if args.get_dev_type() == 'unit_vec':
@@ -108,10 +142,11 @@ def ndss_nn_parameters(parameters,args):
 
     new_parameters = all_updates.extend(mal_update)
 
-    # new_params = {}
-    # for name in parameters[0].keys():
-    #     new_params[name] = sum([param[name].data for param in all_updates])
-    #     new_params[name] += (mal_update[name].data) * args.get_num_attackers()
-    #     new_params[name] /= (len(all_updates) + args.get_num_attackers())
+    new_params = {}
+    for name in parameters[0].keys():
+        new_params[name] = sum([param[name].data for param in all_updates])
+        new_params[name] += (mal_update[name].data) * args.get_num_attackers()
+        new_params[name] /= (len(all_updates) + args.get_num_attackers())
 
-    return new_parameters
+    return new_params
+

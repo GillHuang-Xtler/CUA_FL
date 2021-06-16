@@ -48,13 +48,14 @@ class Arguments:
         self.get_poison_effort = 'full'
         self.num_workers = 100
         self.aggregation = "fedsgd"
-        self.attack = "None"
-        self.num_attackers = 0
+        self.attack = "lie"
+        self.num_attackers = 1
         self.dev_type = 'sign'
         self.num_reverse_layers = 5
         # self.num_poisoned_workers = 10
+        self.lie_z_value = {1:68947,3:0.69847, 5:0.7054, 8:0.71904, 10:0.72575, 12:0.73891}
 
-        self.distribution_method = "noniid_2"
+        self.distribution_method = "bias"
 
         # self.net = Cifar10CNN
         # self.net = Cifar10ResNet
@@ -68,8 +69,8 @@ class Arguments:
         # self.train_data_loader_pickle_path = "data_loaders/cifar10/train_data_loader.pickle"
         # self.test_data_loader_pickle_path = "data_loaders/cifar10/test_data_loader.pickle"
 
-        # self.train_data_loader_pickle_path = "data_loaders/fashion-mnist/train_data_loader.pickle"
-        # self.test_data_loader_pickle_path = "data_loaders/fashion-mnist/test_data_loader.pickle"
+        self.train_data_loader_pickle_path = "data_loaders/fashion-mnist/train_data_loader.pickle"
+        self.test_data_loader_pickle_path = "data_loaders/fashion-mnist/test_data_loader.pickle"
 
         # self.train_data_loader_pickle_path = "data_loaders/fashion-mnist-sample/train_data_loader.pickle"
         # self.test_data_loader_pickle_path = "data_loaders/fashion-mnist-sample/test_data_loader.pickle"
@@ -104,6 +105,9 @@ class Arguments:
     def get_attack_strategy(self):
         return self.attack
 
+    def get_lie_z_value(self):
+        return self.lie_z_value
+
     def get_distribution_method(self):
         return self.distribution_method
 
@@ -121,7 +125,6 @@ class Arguments:
 
     def get_similarity_epsilon(self):
         return self.similarity_epsilon
-
 
     def set_test_data_loader_pickle_path(self, path):
         self.test_data_loader_pickle_path = path
