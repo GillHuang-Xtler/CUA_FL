@@ -11,6 +11,8 @@ class Dataset:
 
 		self.train_dataset = self.load_train_dataset()
 		self.test_dataset = self.load_test_dataset()
+		self.benign_dataset = self.load_benign_dataset()
+		self.malicious_dataset = self.load_malicious_dataset()
 
 	def get_args(self):
 		"""
@@ -35,6 +37,22 @@ class Dataset:
 		:return: tuple
 		"""
 		return self.test_dataset
+
+	def get_benign_dataset(self):
+		"""
+		Returns the test dataset.
+
+		:return: tuple
+		"""
+		return self.benign_dataset
+
+	def get_malicious_dataset(self):
+		"""
+		Returns the test dataset.
+
+		:return: tuple
+		"""
+		return self.malicious_dataset
 
 	@abstractmethod
 	def load_train_dataset(self):

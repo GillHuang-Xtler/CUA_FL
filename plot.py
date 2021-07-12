@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import numpy as np
 
 def plt_txt():
     filename = 'iid-bart.txt'
@@ -680,6 +681,503 @@ def plt_non_iid():
     plt.legend()
     plt.show()
 
+def plt_batch_size():
+    path0 = './res/4024_results.csv'
+    filename0 = path0
+    X0 = []
+    with open(filename0, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X0.append(value[0])
+
+    path1 = './res/61300_results.csv'
+    filename1 = path1
+    X1 = []
+    with open(filename1, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X1.append(value[0])
+
+    filename2 = './res/62100_results.csv'
+    X2 = []
+    with open(filename2, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X2.append(value[0])
+
+    filename3 = './res/6211_results.csv'
+    X3 = []
+    with open(filename3, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X3.append(value[0])
+
+    filename4 = './res/6212_results.csv'
+    X4 = []
+    with open(filename4, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X4.append(value[0])
+
+    plt.plot(X0, label='B=4, C=50', linewidth = '1')
+    plt.plot(X1, label='B=4, C=100', linewidth = '1')
+    plt.plot(X2, label='B=10, C=100', linewidth = '1')
+    plt.plot(X3, label='B=100, C=100', linewidth = '1')
+    plt.plot(X4, label='B=100, C=1', linewidth = '1')
+
+    plt.xlabel('GLOBAL ROUNDS')
+    plt.ylabel('ACCURACY')
+    # plt.ylim(50)
+    plt.legend()
+    plt.show()
+
+def plt_non_iid_100():
+    path0 = './res/61300_results.csv'
+    filename0 = path0
+    X0 = []
+    with open(filename0, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X0.append(value[0])
+    Y0 = 100 - max(X0)
+
+    path1 = './res/6213_results.csv'
+    filename1 = path1
+    X1 = []
+    with open(filename1, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X1.append(value[0])
+
+    Y1 = 100-max(X1)
+
+
+    filename2 = './res/6214_results.csv'
+    X2 = []
+    with open(filename2, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X2.append(value[0])
+    print("non2-none"+": "+str(100-max(X2)))
+    Y2 = 100-max(X2)
+
+    path3 = './res/6221_results.csv'
+    filename3 = path3
+    X3 = []
+    with open(filename3, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X3.append(value[0])
+    Y3 = 100-max(X3)
+    print("iid-lie"+": "+str(100-max(X3)))
+
+    path4 = './res/6222_results.csv'
+    filename4 = path4
+    X4 = []
+    with open(filename4, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X4.append(value[0])
+    Y4 = 100-max(X4)
+    print("non2-lie"+": "+str(100-max(X4)))
+
+
+    path5='./res/6223_results.csv'
+    filename5 = path5
+    X5 = []
+    with open(filename5, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X5.append(value[0])
+    Y5 = 100-max(X5)
+    print("non1-lie"+": "+str(100-max(X5)))
+
+    labels = ['no_attack', 'lie']
+    x = np.arange(len(labels))
+
+    width = 0.25
+    plt.xticks(x, labels=labels)
+    iid = [Y0, Y3]
+    non_iid_2_class = [Y2, Y4]
+    non_iid_1_class = [Y1, Y5]
+    plt.bar(x - width, iid, width, label='iid')
+    plt.bar(x, non_iid_2_class, width, label='non-iid-2-class')
+    plt.bar(x + width, non_iid_1_class, width, label='non-iid-1-class')
+
+    plt.title("Error Rate without Defense")
+    plt.legend()
+    plt.show()
+
+def plt_non_iid_defense():
+    path00 = './res/61300_results.csv'
+    filename00 = path00
+    X00 = []
+    with open(filename00, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X00.append(value[0])
+    Y00 = 100 - max(X00)
+
+    path01 = './res/6213_results.csv'
+    filename01 = path01
+    X01 = []
+    with open(filename01, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X01.append(value[0])
+
+    Y01 = 100 - max(X01)
+
+    filename02 = './res/6214_results.csv'
+    X02 = []
+    with open(filename02, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X02.append(value[0])
+    Y02 = 100 - max(X02)
+
+    path0 = './res/6221_results.csv'
+    filename0 = path0
+    X0 = []
+    with open(filename0, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X0.append(value[0])
+    Y0 = 100 - max(X0)
+
+    path1 = './res/6222_results.csv'
+    filename1 = path1
+    X1 = []
+    with open(filename1, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X1.append(value[0])
+    Y1 = 100-max(X1)
+
+
+    filename2 = './res/6223_results.csv'
+    X2 = []
+    with open(filename2, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X2.append(value[0])
+    Y2 = 100-max(X2)
+
+    path3 = './res/6231_results.csv'
+    filename3 = path3
+    X3 = []
+    with open(filename3, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X3.append(value[0])
+    Y3 = 100-max(X3)
+
+    path4 = './res/6232_results.csv'
+    filename4 = path4
+    X4 = []
+    with open(filename4, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X4.append(value[0])
+    Y4 = 100-max(X4)
+
+
+    path5='./res/6233_results.csv'
+    filename5 = path5
+    X5 = []
+    with open(filename5, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X5.append(value[0])
+    Y5 = 100-max(X5)
+
+
+    path6 = './res/6234_results.csv'
+    filename6 = path6
+    X6 = []
+    with open(filename6, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X6.append(value[0])
+    Y6 = 100-max(X6)
+
+    filename7 = './res/6235_results.csv'
+    X7 = []
+    with open(filename7, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X7.append(value[0])
+    Y7 = 100-max(X7)
+
+
+    path8='./res/6236_results.csv'
+    filename8 = path8
+    X8 = []
+    with open(filename8, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X8.append(value[0])
+    Y8 = 100-max(X8)
+
+
+    filename9 = './res/6237_results.csv'
+    X9 = []
+    with open(filename9, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X9.append(value[0])
+    Y9 = 100-max(X9)
+
+    filename10 = './res/6238_results.csv'
+    X10 = []
+    with open(filename10, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X10.append(value[0])
+    Y10 = 100-max(X10)
+
+
+    filename11='./res/6239_results.csv'
+    X11 = []
+    with open(filename11, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X11.append(value[0])
+    Y11 = 100-max(X11)
+
+    labels = ['no_defense', 'mkrum',  'bulyan', "trmean"]
+    x = np.arange(len(labels))
+
+    width = 0.25
+    plt.xticks(x, labels=labels)
+    iid = [Y0-Y00, Y3-Y00, Y6-Y00, Y9-Y00]
+    non_iid_2_class = [Y1-Y02, Y4-Y02, Y7-Y02, Y10-Y02]
+    non_iid_1_class = [Y2-Y01, Y5-Y01, Y8-Y01, Y11-Y01]
+    plt.bar(x - width, iid, width, label='iid')
+    plt.bar(x, non_iid_2_class, width, label='non-iid-2-class')
+    plt.bar(x + width, non_iid_1_class, width, label='non-iid-1-class')
+
+    plt.title("ASR of LIE under Defense")
+    plt.legend()
+    plt.show()
+
+def plt_non_iid_distribution():
+
+    path0 = './res/61200_results.csv'
+    filename0 = path0
+    X0 = []
+    with open(filename0, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X0.append(value[0])
+    Y0 = 100 - max(X0)
+
+    filename01 = './res/7120_results.csv'
+    X01 = []
+    with open(filename01, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X01.append(value[0])
+    Y01 = 100 - max(X01)
+    print("err: "+str(Y01))
+
+    filename02 = './res/6214_results.csv'
+    X02 = []
+    with open(filename02, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X02.append(value[0])
+    Y02 = 100 - max(X02)
+    print("err: "+str(Y02))
+
+    filename03 = './res/7120_results.csv'
+    X03 = []
+    with open(filename03, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X03.append(value[0])
+    Y03 = 100 - max(X03)
+    print("err: "+str(Y03))
+
+    filename04 = './res/7122_results.csv'
+    X04 = []
+    with open(filename04, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X04.append(value[0])
+    Y04 = 100 - max(X04)
+    print("err: "+str(Y04))
+
+    path1 = './res/6221_results.csv'
+    filename1 = path1
+    X1 = []
+    with open(filename1, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X1.append(value[0])
+    Y1 = 100-max(X1)
+
+
+    filename2 = './res/6222_results.csv'
+    X2 = []
+    with open(filename2, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X2.append(value[0])
+    Y2 = 100-max(X2)
+    print("err: "+str(Y2))
+
+    path3 = './res/6231_results.csv'
+    filename3 = path3
+    X3 = []
+    with open(filename3, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X3.append(value[0])
+    Y3 = 100-max(X3)
+
+    path4 = './res/6232_results.csv'
+    filename4 = path4
+    X4 = []
+    with open(filename4, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X4.append(value[0])
+    Y4 = 100-max(X4)
+
+    path5='./res/6234_results.csv'
+    filename5 = path5
+    X5 = []
+    with open(filename5, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X5.append(value[0])
+    Y5 = 100-max(X5)
+
+
+    path6 = './res/6235_results.csv'
+    filename6 = path6
+    X6 = []
+    with open(filename6, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X6.append(value[0])
+    Y6 = 100-max(X6)
+
+    filename7 = './res/6237_results.csv'
+    X7 = []
+    with open(filename7, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X7.append(value[0])
+    Y7 = 100-max(X7)
+
+
+    path8='./res/6238_results.csv'
+    filename8 = path8
+    X8 = []
+    with open(filename8, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X8.append(value[0])
+    Y8 = 100-max(X8)
+
+    filename9 = './res/7073_results.csv'
+    X9 = []
+    with open(filename9, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X9.append(value[0])
+    Y9 = 100-max(X9)
+
+    filename10 = './res/7074_results.csv'
+    X10 = []
+    with open(filename10, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X10.append(value[0])
+    Y10 = 100-max(X10)
+
+
+    filename11='./res/7075_results.csv'
+    X11 = []
+    with open(filename11, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X11.append(value[0])
+    Y11 = 100-max(X11)
+
+    filename12='./res/7076_results.csv'
+    X12 = []
+    with open(filename12, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X12.append(value[0])
+    Y12 = 100-max(X12)
+
+
+    labels = ['no_defense', 'mkrum', 'bulyan', 'trmean']
+    x = np.arange(len(labels))
+
+    width = 0.25
+    plt.xticks(x, labels=labels)
+    iid = [Y1-Y0, Y3-Y03, Y5-Y0, Y7-Y0]
+    non_iid_2_class = [Y2-Y02, Y4-Y04, Y6-Y02, Y8-Y02]
+    non_iid_2_class_m = [Y9-Y02, Y10-Y04, Y11-Y02, Y12-Y02]
+    print(non_iid_2_class)
+
+    # non_iid_1_class = [Y2-Y01, Y5-Y01, Y8-Y01, Y11-Y01]
+    plt.bar(x - width, iid, width, label='iid')
+    plt.bar(x, non_iid_2_class, width, label='non-iid-2-wo')
+    plt.bar(x + width, non_iid_2_class_m, width, label='non-iid-2-w')
+
+    plt.title("ASR of LIE under Defense w/wo Distribution Reconstruction")
+    plt.legend()
+    plt.show()
+
 if __name__ =='__main__':
     # plt_txt()
     # plt_acc()
@@ -688,4 +1186,7 @@ if __name__ =='__main__':
     # plt_atk_bar()
     # plt_agg_comp()
     # plt_reverse()
-    plt_non_iid()
+    # plt_non_iid_100()
+    # plt_batch_size()
+    # plt_non_iid_defense()
+    plt_non_iid_distribution()

@@ -14,7 +14,7 @@ def multi_krum_nn_parameters(dict_parameters, args):
 
     args.get_logger().info("Averaging parameters on multi krum")
     multi_krum = 5
-    candidate_num = 6
+    candidate_num = 7
     distances = {}
     tmp_parameters = {}
     for idx, parameter in dict_parameters.items():
@@ -23,7 +23,6 @@ def multi_krum_nn_parameters(dict_parameters, args):
             dis = [torch.norm((parameter[name].data - _parameter[name].data).float())**2 for name in parameter.keys()]
             distance.append(sum(dis))
             tmp_parameters[idx] = parameter
-        # distance = sum(torch.Tensor(distance).float())
         distance.sort()
         distances[idx] = sum(distance[:candidate_num])
     args.get_logger().info("Distances #{} on client #{}", str(distances.values()),
@@ -81,7 +80,7 @@ def bulyan_nn_parameters(dict_parameters, args):
     """
     args.get_logger().info("Averaging parameters on bulyan")
     multi_krum = 5
-    candidate_num = 6
+    candidate_num = 7
     distances = {}
     tmp_parameters = {}
     for idx, parameter in dict_parameters.items():
@@ -117,11 +116,11 @@ def trmean_nn_parameters(parameters, args):
     for name in parameters[0].keys():
         tmp = []
         for param in parameters:
-            tmp.append(param[name].data)
+            tmp.append(param[name].data.long())
         max_data = torch.max(torch.stack(tmp), 0)[0]
         min_data = torch.min(torch.stack(tmp), 0)[0]
         new_params[name] = sum([param[name].data for param in parameters])
-        new_params[name] -= (max_data+min_data)
+        new_params[name] -= (max_data.float()+min_data.float())
         new_params[name] /= (len(parameters)-2)
 
     return new_params
@@ -140,7 +139,7 @@ def median_nn_parameters(parameters, args):
     for name in parameters[0].keys():
         tmp = []
         for param in parameters:
-            tmp.append(param[name].data)
+            tmp.append(param[name].data.long())
         median_data = torch.median(torch.stack(tmp), 0)[0]
         new_params[name] = median_data
 

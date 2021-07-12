@@ -17,7 +17,7 @@ class RandomSelectionStrategy(SelectionStrategy):
         return random.sample(workers, kwargs["NUM_WORKERS_PER_ROUND"])
 
     def select_round_workers_minus_1(self, workers, poisoned_workers, kwargs):
-        return random.sample(workers, kwargs["NUM_WORKERS_PER_ROUND"]-1)
+        return random.sample(workers[:90], kwargs["NUM_WORKERS_PER_ROUND"]-1)
 
     def select_round_workers_minus_2(self, workers, poisoned_workers, kwargs):
         return random.sample(workers, kwargs["NUM_WORKERS_PER_ROUND"]-2)

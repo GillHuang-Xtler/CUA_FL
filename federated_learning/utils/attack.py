@@ -70,6 +70,8 @@ def lie_nn_parameters(parameters, args):
     for params in parameters[:len(parameters)-args.get_num_attackers()]:
         new_parameters.append(params)
 
+    # print("benign: "+ str(len(new_parameters)))
+
     z_value = args.get_lie_z_value()
     mean_params = {}
     std_params = {}
@@ -85,10 +87,52 @@ def lie_nn_parameters(parameters, args):
     for name in parameters[0].keys():
         mal_param[name] = mean_params[name] + z_value[args.get_num_attackers()] * std_params[name]
 
+    # [new_parameters.append(mal_param) for i in range(args.get_num_attackers())]
     new_parameters.append(mal_param)
+    # print("all: "+ str(len(new_parameters)))
 
     return new_parameters
 
+### Multi-krum and Bulyan
+def fang_nn_parameters(parameters, args):
+    """
+    generate fang parameters.
+
+    :param parameters: nn model named parameters
+    :type parameters: list
+    """
+
+    args.get_logger().info("Averaging parameters on model fang attackers")
+    new_parameters = []
+    for params in parameters[:len(parameters)-args.get_num_attackers()]:
+        new_parameters.append(params)
+
+    z_value = args.get_lie_z_value()
+    mean_params = {}
+    std_params = {}
+    deviation = {}
+    for name in parameters[0].keys():
+        mean_params[name] = sum([param[name].data for param in parameters])/len(parameters)
+        deviation[name] = torch.sign(mean_params[name])
+
+    lamda = compute_lambda_fang(parameters, mean_params, args.get_num_attackers())
+    threshold = 1e-5
+    mal_params = {}
+    while lamda > threshold:
+        for name in parameters[0].keys():
+            mal_params[name] = (- lamda * deviation[name])
+        new_parameters = torch.stack([mal_params] * args.get_num_attackers())
+        new_parameters = torch.cat((new_parameters, parameters[:len(parameters)-args.get_num_attackers()]), 0)
+
+
+
+    mal_param = {}
+    for name in parameters[0].keys():
+        mal_param[name] = mean_params[name] + z_value[args.get_num_attackers()] * std_params[name]
+
+    [new_parameters.append(mal_param) for i in range(args.get_num_attackers())]
+
+    return new_parameters
 
 def ndss_nn_parameters(parameters,args):
     """

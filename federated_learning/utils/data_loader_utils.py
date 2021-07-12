@@ -36,9 +36,50 @@ def load_train_data_loader(logger, args):
 
         raise FileNotFoundError("Couldn't find train data loader stored in file")
 
+def load_benign_data_loader(logger, args):
+    """
+    Loads the training data DataLoader object from a file if available.
+
+    :param logger: loguru.Logger
+    :param args: Arguments
+    """
+    if os.path.exists(args.get_benign_data_loader_pickle_path()):
+        return load_data_loader_from_file(logger, args.get_benign_data_loader_pickle_path())
+    else:
+        logger.error("Couldn't find train data loader stored in file")
+
+        raise FileNotFoundError("Couldn't find train data loader stored in file")
+
+def load_malicious_data_loader(logger, args):
+    """
+    Loads the training data DataLoader object from a file if available.
+
+    :param logger: loguru.Logger
+    :param args: Arguments
+    """
+    if os.path.exists(args.get_malicious_data_loader_pickle_path()):
+        return load_data_loader_from_file(logger, args.get_malicious_data_loader_pickle_path())
+    else:
+        logger.error("Couldn't find train data loader stored in file")
+
+        raise FileNotFoundError("Couldn't find train data loader stored in file")
+
+
 def generate_train_loader(args, dataset):
     train_dataset = dataset.get_train_dataset()
     X, Y = shuffle_data(args, train_dataset)
+
+    return dataset.get_data_loader_from_data(args.get_batch_size(), X, Y)
+
+def generate_benign_loader(args, dataset):
+    benign_dataset = dataset.get_benign_dataset()
+    X, Y = shuffle_data(args, benign_dataset)
+
+    return dataset.get_data_loader_from_data(args.get_batch_size(), X, Y)
+
+def generate_malicious_loader(args, dataset):
+    malicious_dataset = dataset.get_malicious_dataset()
+    X, Y = shuffle_data(args, malicious_dataset)
 
     return dataset.get_data_loader_from_data(args.get_batch_size(), X, Y)
 

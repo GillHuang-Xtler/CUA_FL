@@ -38,3 +38,32 @@
 - 5121： fashion-sgd-none-100-10-2-100 for gradient aggregation
 - 5141： fashion-non1-sgd-none-100-10-0-100
 - 5151： fashion-non2-sgd-none-100-10-0-100
+- 61300：fashion-sgd-none-100-10-0-100, batch_size=4
+- 62100：fashion-sgd-none-100-10-0-100, batch_size=10
+- 6211：fashion-sgd-none-100-10-0-100, batch_size=100
+- 6212：fashion-sgd-none-1-1-0-100, batch_size=100
+- 6213：fashion-non1-sgd-none-100-10-0-100, batch_size=4
+- 6214：fashion-non2-sgd-none-100-10-0-100, batch_size=4
+- 6221：fashion-iid-lie-none-100-10-1-100, batch_size=4
+- 6222：fashion-non2-lie-none-100-10-1-100, batch_size=4
+- 6223：fashion-non1-lie-none-100-10-1-100, batch_size=4
+- 6231：fashion-iid-lie-mkrum-100-10-1-100, batch_size=4
+- 6232：fashion-non2-lie-mkrum-100-10-1-100, batch_size=4
+- 6233：fashion-non1-lie-mkrum-100-10-1-100, batch_size=4
+- 6234：fashion-iid-lie-bulyan-100-10-1-100, batch_size=4
+- 6235：fashion-non2-lie-bulyan-100-10-1-100, batch_size=4
+- 6236：fashion-non1-lie-bulyan-100-10-1-100, batch_size=4
+- 6237：fashion-iid-lie-trmean-100-10-1-100, batch_size=4
+- 6238：fashion-non2-lie-trmean-100-10-1-100, batch_size=4
+- 6239：fashion-non1-lie-trmean-100-10-1-100, batch_size=4
+- 7071：fashion-iid-rev-sgd-100-10-1-100, batch_size=4
+- 7072：fashion-non2-rev-sgd-100-10-1-100, batch_size=4
+- 7073：fashion-non2m-lie-sgd-100-10-1-100, batch_size=4
+- 7074：fashion-non2m-lie-mkrum-100-10-1-100, batch_size=4
+- 7075：fashion-non2m-lie-bulyan-100-10-1-100, batch_size=4
+- 7076：fashion-non2m-lie-trmean-100-10-1-100, batch_size=4
+- 7077：fashion-non2m-lie-median-100-10-1-100, batch_size=4
+- 7120：fashion-iid-sgd-mkrum-100-10-0-100, batch_size=4
+- 7121：fashion-non2-lie-none-100-10-1-100, batch_size=4--2
+- 7122：fashion-non2-sgd-mkrum-100-10-0-100, batch_size=4
+

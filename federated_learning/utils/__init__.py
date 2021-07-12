@@ -9,9 +9,9 @@ from .file_storage_utils import read_results_v2
 from .file_storage_utils import generate_json_repr_for_worker
 from .file_storage_utils import convert_test_results_to_json
 from .data_loader_utils import generate_data_loaders_from_distributed_dataset
-from .data_loader_utils import load_train_data_loader
+from .data_loader_utils import load_train_data_loader, load_benign_data_loader, load_malicious_data_loader
 from .data_loader_utils import load_test_data_loader
-from .data_loader_utils import generate_train_loader, generate_train_loader_sample
+from .data_loader_utils import generate_train_loader, generate_train_loader_sample, generate_benign_loader, generate_malicious_loader
 from .data_loader_utils import load_data_loader_from_file
 from .data_loader_utils import generate_test_loader
 from .data_loader_utils import save_data_loader_to_file

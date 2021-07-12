@@ -47,15 +47,15 @@ class Arguments:
         self.epoch_save_end_suffix = "end"
         self.get_poison_effort = 'full'
         self.num_workers = 100
-        self.aggregation = "fedsgd"
-        self.attack = "lie"
+        self.aggregation = "mkrum"
+        self.attack = "None"
         self.num_attackers = 1
         self.dev_type = 'sign'
         self.num_reverse_layers = 5
         # self.num_poisoned_workers = 10
         self.lie_z_value = {1:68947,3:0.69847, 5:0.7054, 8:0.71904, 10:0.72575, 12:0.73891}
 
-        self.distribution_method = "bias"
+        self.distribution_method = "iid"
 
         # self.net = Cifar10CNN
         # self.net = Cifar10ResNet
@@ -71,6 +71,8 @@ class Arguments:
 
         self.train_data_loader_pickle_path = "data_loaders/fashion-mnist/train_data_loader.pickle"
         self.test_data_loader_pickle_path = "data_loaders/fashion-mnist/test_data_loader.pickle"
+        self.benign_data_loader_pickle_path = "data_loaders/fashion-mnist/benign_data_loader.pickle"
+        self.malicious_data_loader_pickle_path = "data_loaders/fashion-mnist/malicious_data_loader.pickle"
 
         # self.train_data_loader_pickle_path = "data_loaders/fashion-mnist-sample/train_data_loader.pickle"
         # self.test_data_loader_pickle_path = "data_loaders/fashion-mnist-sample/test_data_loader.pickle"
@@ -122,6 +124,12 @@ class Arguments:
 
     def get_train_data_loader_pickle_path(self):
         return self.train_data_loader_pickle_path
+
+    def get_benign_data_loader_pickle_path(self):
+        return self.benign_data_loader_pickle_path
+
+    def get_malicious_data_loader_pickle_path(self):
+        return self.malicious_data_loader_pickle_path
 
     def get_similarity_epsilon(self):
         return self.similarity_epsilon
