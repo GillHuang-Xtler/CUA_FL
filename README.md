@@ -66,4 +66,9 @@
 - 7120：fashion-iid-sgd-mkrum-100-10-0-100, batch_size=4
 - 7121：fashion-non2-lie-none-100-10-1-100, batch_size=4--2
 - 7122：fashion-non2-sgd-mkrum-100-10-0-100, batch_size=4
+- 7190：fashion-iid-sgd-bulyan-100-10-0-100, batch_size=4
+- 7191：fashion-non2-sgd-bulyan-100-10-0-100, batch_size=4
+- 7192：fashion-non2-sgd-trmean-100-10-0-100, batch_size=4
+- 7193：fashion-iid-sgd-trmean-100-10-0-100, batch_size=4
+
 

@@ -47,7 +47,7 @@ class Arguments:
         self.epoch_save_end_suffix = "end"
         self.get_poison_effort = 'full'
         self.num_workers = 100
-        self.aggregation = "mkrum"
+        self.aggregation = "trmean"
         self.attack = "None"
         self.num_attackers = 1
         self.dev_type = 'sign'

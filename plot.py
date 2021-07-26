@@ -330,9 +330,9 @@ def nun_maverick():
     #         value = [float(s) for s in line.split(',')]
     #         X9.append(value[13])
     # print(X9)
-
-    plt.plot(X1, color='yellow', label='IID', linestyle=':', marker = 'o', markersize = 2)
-    plt.plot(X2, color='black', label='Reduce-class',linestyle=':', marker = 'o', markersize = 2)
+    #
+    # plt.plot(X1, color='yellow', label='IID', linestyle=':', marker = 'o', markersize = 2)
+    # plt.plot(X2, color='black', label='Reduce-class',linestyle=':', marker = 'o', markersize = 2)
     plt.plot(X3, color='brown', label='Reduce-class-plus',linestyle=':', marker = 'o', markersize = 2)
     # plt.plot(X4, color='skyblue', label='Reduce-class-only',linestyle=':', marker = 'o', markersize = 2)
     # plt.plot(X5, color='orange', label='Reduce-class-must',linestyle=':', marker = 'o', markersize = 2)
@@ -989,7 +989,7 @@ def plt_non_iid_defense():
 
 def plt_non_iid_distribution():
 
-    path0 = './res/61200_results.csv'
+    path0 = './res/61300_results.csv'
     filename0 = path0
     X0 = []
     with open(filename0, 'r') as f:
@@ -1007,7 +1007,6 @@ def plt_non_iid_distribution():
             value = [float(s) for s in line.split(',')]
             X01.append(value[0])
     Y01 = 100 - max(X01)
-    print("err: "+str(Y01))
 
     filename02 = './res/6214_results.csv'
     X02 = []
@@ -1017,7 +1016,6 @@ def plt_non_iid_distribution():
             value = [float(s) for s in line.split(',')]
             X02.append(value[0])
     Y02 = 100 - max(X02)
-    print("err: "+str(Y02))
 
     filename03 = './res/7120_results.csv'
     X03 = []
@@ -1027,7 +1025,6 @@ def plt_non_iid_distribution():
             value = [float(s) for s in line.split(',')]
             X03.append(value[0])
     Y03 = 100 - max(X03)
-    print("err: "+str(Y03))
 
     filename04 = './res/7122_results.csv'
     X04 = []
@@ -1037,7 +1034,42 @@ def plt_non_iid_distribution():
             value = [float(s) for s in line.split(',')]
             X04.append(value[0])
     Y04 = 100 - max(X04)
-    print("err: "+str(Y04))
+
+    filename05 = './res/7190_results.csv'
+    X05 = []
+    with open(filename05, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X05.append(value[0])
+    Y05 = 100 - max(X05)
+
+    filename06 = './res/7191_results.csv'
+    X06 = []
+    with open(filename06, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X06.append(value[0])
+    Y06 = 100 - max(X06)
+
+    filename07 = './res/7193_results.csv'
+    X07 = []
+    with open(filename07, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X07.append(value[0])
+    Y07 = 100 - max(X07)
+
+    filename08 = './res/7192_results.csv'
+    X08 = []
+    with open(filename08, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X08.append(value[0])
+    Y08 = 100 - max(X08)
 
     path1 = './res/6221_results.csv'
     filename1 = path1
@@ -1058,7 +1090,6 @@ def plt_non_iid_distribution():
             value = [float(s) for s in line.split(',')]
             X2.append(value[0])
     Y2 = 100-max(X2)
-    print("err: "+str(Y2))
 
     path3 = './res/6231_results.csv'
     filename3 = path3
@@ -1079,6 +1110,7 @@ def plt_non_iid_distribution():
             value = [float(s) for s in line.split(',')]
             X4.append(value[0])
     Y4 = 100-max(X4)
+    print(Y4)
 
     path5='./res/6234_results.csv'
     filename5 = path5
@@ -1138,6 +1170,7 @@ def plt_non_iid_distribution():
             value = [float(s) for s in line.split(',')]
             X10.append(value[0])
     Y10 = 100-max(X10)
+    print(Y10)
 
 
     filename11='./res/7075_results.csv'
@@ -1164,9 +1197,9 @@ def plt_non_iid_distribution():
 
     width = 0.25
     plt.xticks(x, labels=labels)
-    iid = [Y1-Y0, Y3-Y03, Y5-Y0, Y7-Y0]
-    non_iid_2_class = [Y2-Y02, Y4-Y04, Y6-Y02, Y8-Y02]
-    non_iid_2_class_m = [Y9-Y02, Y10-Y04, Y11-Y02, Y12-Y02]
+    iid = [Y1-Y0, Y3-Y03, Y5-Y05, Y7-Y07]
+    non_iid_2_class = [Y2-Y02, Y4-Y04, Y6-Y06, Y8-Y08]
+    non_iid_2_class_m = [Y9-Y02, Y10-Y04, Y11-Y06, Y12-Y08]
     print(non_iid_2_class)
 
     # non_iid_1_class = [Y2-Y01, Y5-Y01, Y8-Y01, Y11-Y01]
@@ -1175,6 +1208,213 @@ def plt_non_iid_distribution():
     plt.bar(x + width, non_iid_2_class_m, width, label='non-iid-2-w')
 
     plt.title("ASR of LIE under Defense w/wo Distribution Reconstruction")
+    plt.legend()
+    plt.show()
+
+def plt_none_noniid_defense():
+    path00 = './res/61300_results.csv'
+    filename00 = path00
+    X00 = []
+    with open(filename00, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X00.append(value[0])
+    Y00 = 100 - max(X00)
+
+    # path01 = './res/6213_results.csv'
+    # filename01 = path01
+    # X01 = []
+    # with open(filename01, 'r') as f:
+    #     lines = f.readlines()
+    #     for line in lines:
+    #         value = [float(s) for s in line.split(',')]
+    #         X01.append(value[0])
+    #
+    # Y01 = 100 - max(X01)
+
+    filename02 = './res/6214_results.csv'
+    X02 = []
+    with open(filename02, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X02.append(value[0])
+    Y02 = 100 - max(X02)
+
+    filename03 = './res/7120_results.csv'
+    X03 = []
+    with open(filename03, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X03.append(value[0])
+    Y03 = 100 - max(X03)
+
+    filename04 = './res/7122_results.csv'
+    X04 = []
+    with open(filename04, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X04.append(value[0])
+    Y04 = 100 - max(X04)
+
+    filename05 = './res/7190_results.csv'
+    X05 = []
+    with open(filename05, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X05.append(value[0])
+    Y05 = 100 - max(X05)
+
+    filename06 = './res/7191_results.csv'
+    X06 = []
+    with open(filename06, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X06.append(value[0])
+    Y06 = 100 - max(X06)
+
+
+    filename07 = './res/7193_results.csv'
+    X07 = []
+    with open(filename07, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X07.append(value[0])
+    Y07 = 100 - max(X07)
+
+    filename08 = './res/7192_results.csv'
+    X08 = []
+    with open(filename08, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X08.append(value[0])
+    Y08 = 100 - max(X08)
+
+    path0 = './res/6221_results.csv'
+    filename0 = path0
+    X0 = []
+    with open(filename0, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X0.append(value[0])
+    Y0 = 100 - max(X0)
+
+    path1 = './res/6222_results.csv'
+    filename1 = path1
+    X1 = []
+    with open(filename1, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X1.append(value[0])
+    Y1 = 100-max(X1)
+
+    path3 = './res/6231_results.csv'
+    filename3 = path3
+    X3 = []
+    with open(filename3, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X3.append(value[0])
+    Y3 = 100-max(X3)
+
+    path4 = './res/6232_results.csv'
+    filename4 = path4
+    X4 = []
+    with open(filename4, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X4.append(value[0])
+    Y4 = 100-max(X4)
+
+    path6 = './res/6234_results.csv'
+    filename6 = path6
+    X6 = []
+    with open(filename6, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X6.append(value[0])
+    Y6 = 100-max(X6)
+
+    filename7 = './res/6235_results.csv'
+    X7 = []
+    with open(filename7, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X7.append(value[0])
+    Y7 = 100-max(X7)
+
+    filename9 = './res/6237_results.csv'
+    X9 = []
+    with open(filename9, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X9.append(value[0])
+    Y9 = 100-max(X9)
+
+    filename10 = './res/6238_results.csv'
+    X10 = []
+    with open(filename10, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X10.append(value[0])
+    Y10 = 100-max(X10)
+
+    labels = ['no_defense', 'mkrum',  'bulyan', "trmean"]
+    x = np.arange(len(labels))
+
+    width = 0.25
+    plt.xticks(x, labels=labels)
+    iid = [Y00, Y03, Y05, Y07]
+    non_iid_2_class = [Y02, Y04, Y06, Y08]
+    plt.bar(x - width, iid, width, label='iid')
+    plt.bar(x, non_iid_2_class, width, label='non-iid-2-class')
+
+    plt.title("Error Rate of Noniid under Defense")
+    plt.legend()
+    plt.show()
+
+def plt_fang_comp():
+    plt.subplot(121)
+    labels = ['krum',  "trmean",'median']
+    x = np.arange(len(labels))
+
+    width = 0.25
+    plt.xticks(x, labels=labels)
+    fang = [64,8,22]
+    rep_fang = [20.5,1.8,1.7]
+    plt.bar(x - width, fang, width, label='fang')
+    plt.bar(x, rep_fang, width, label='rep_fang')
+
+    plt.title("ASR updates unknown MNIST")
+
+    plt.subplot(122)
+    labels = ['krum',  "trmean",'median']
+    x = np.arange(len(labels))
+
+    width = 0.25
+    plt.xticks(x, labels=labels)
+    fang = [66, 17, 26]
+    rep_fang = [17.4, 1.7, 1.5]
+    plt.bar(x - width, fang, width, label='fang')
+    plt.bar(x, rep_fang, width, label='rep_fang')
+
+    plt.title("ASR updates known MNIST")
+
     plt.legend()
     plt.show()
 
@@ -1189,4 +1429,6 @@ if __name__ =='__main__':
     # plt_non_iid_100()
     # plt_batch_size()
     # plt_non_iid_defense()
-    plt_non_iid_distribution()
+    # plt_non_iid_distribution()
+    # plt_none_noniid_defense()
+    plt_fang_comp()

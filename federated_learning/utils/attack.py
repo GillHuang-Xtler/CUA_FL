@@ -19,11 +19,6 @@ def reverse_nn_parameters(parameters, previous_weight, args):
             params[name] = (2*previous_weight[name].data - params[name].data) * args.get_num_attackers()
         new_parameters.append(params)
 
-            # new_params[name] = sum([param[name].data for param in parameters[:-(args.get_num_attackers())]])
-            # new_params[name] += (2*previous_weight[name].data - parameters[-1][name].data) * args.get_num_attackers()
-            # # new_params[name] += (parameters[-1][name].data) * args.get_num_attackers()
-            # new_params[name] /= len(parameters)
-
     return new_parameters
 
 def reverse_last_parameters(parameters, previous_weight, args):
@@ -47,14 +42,6 @@ def reverse_last_parameters(parameters, previous_weight, args):
                 params[name] = params[name]
         new_parameters.append(params)
 
-
-    # for name in parameters[0].keys():
-    #     if name in layers[-(args.get_num_reverse_layers()):]:
-    #         new_params[name] = sum([param[name].data for param in parameters[:-(args.get_num_attackers())]])
-    #         new_params[name] -= (parameters[-1][name].data) * args.get_num_attackers()
-    #         new_params[name] /= (len(parameters))
-    #     else:
-    #         new_params[name] = sum([param[name].data for param in parameters]) / len(parameters)
     return new_parameters
 
 def lie_nn_parameters(parameters, args):
