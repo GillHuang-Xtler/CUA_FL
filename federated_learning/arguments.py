@@ -22,7 +22,7 @@ class Arguments:
 
         self.batch_size = 4
         self.test_batch_size = 1000
-        self.epochs = 100
+        self.epochs = 50
         self.lr = 0.001
         self.momentum = 0.9
         self.cuda = False
@@ -47,9 +47,9 @@ class Arguments:
         self.epoch_save_end_suffix = "end"
         self.get_poison_effort = 'full'
         self.num_workers = 100
-        self.aggregation = "trmean"
-        self.attack = "None"
-        self.num_attackers = 1
+        self.aggregation = "fedsgd"
+        self.attack = "reverse"
+        self.num_attackers = 2
         self.dev_type = 'sign'
         self.num_reverse_layers = 5
         # self.num_poisoned_workers = 10

@@ -16,7 +16,8 @@ def reverse_nn_parameters(parameters, previous_weight, args):
 
     for params in parameters[len(parameters)-args.get_num_attackers():]:
         for name in parameters[0].keys():
-            params[name] = (2*previous_weight[name].data - params[name].data) * args.get_num_attackers()
+            # params[name] = (2*previous_weight[name].data - params[name].data)
+            params[name] = - params[name].data
         new_parameters.append(params)
 
     return new_parameters
@@ -37,7 +38,7 @@ def reverse_last_parameters(parameters, previous_weight, args):
     for params in parameters[len(parameters)-args.get_num_attackers():]:
         for name in parameters[0].keys():
             if name in layers[-(args.get_num_reverse_layers()):]:
-                params[name] = (2*previous_weight[name].data - params[name].data) * args.get_num_attackers()
+                params[name] = (2*previous_weight[name].data - params[name].data)
             else:
                 params[name] = params[name]
         new_parameters.append(params)
@@ -181,3 +182,25 @@ def ndss_nn_parameters(parameters,args):
 
     return new_params
 
+def free_nn_parameters(parameters, previous_weight, args):
+    """
+    generate reverse all layers parameters.
+
+    :param parameters: nn model named parameters
+    :type parameters: list
+    """
+
+    args.get_logger().info("Data Free Untargeted Attack")
+    new_parameters = []
+    for params in parameters[:len(parameters)-args.get_num_attackers()]:
+        new_parameters.append(params)
+
+    tmp = {}
+    for name in previous_weight.keys():
+        tmp[name] = (previous_weight[name].data)
+
+    for i in range(args.get_num_attackers()):
+        new_parameters.append(tmp)
+    args.get_logger().info("the last 2 client do not have any data for training")
+
+    return new_parameters

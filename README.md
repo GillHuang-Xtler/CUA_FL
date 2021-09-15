@@ -64,11 +64,17 @@
 - 7076：fashion-non2m-lie-trmean-100-10-1-100, batch_size=4
 - 7077：fashion-non2m-lie-median-100-10-1-100, batch_size=4
 - 7120：fashion-iid-sgd-mkrum-100-10-0-100, batch_size=4
-- 7121：fashion-non2-lie-none-100-10-1-100, batch_size=4--2
+- 7121：fashion-non2-lie-none-100-10-1-100, batch_size=4
 - 7122：fashion-non2-sgd-mkrum-100-10-0-100, batch_size=4
 - 7190：fashion-iid-sgd-bulyan-100-10-0-100, batch_size=4
 - 7191：fashion-non2-sgd-bulyan-100-10-0-100, batch_size=4
 - 7192：fashion-non2-sgd-trmean-100-10-0-100, batch_size=4
 - 7193：fashion-iid-sgd-trmean-100-10-0-100, batch_size=4
+- 9140: fashion-iid-avg-none-100-10-0-50
+- 9141: fashion-iid-freerider-none-100-10-2-50
+- 9142: fashion-iid-free-reverse-none-100-10-2-50
+- 9143: fashion-iid-reverse-none-100-10-2-50
+
+
 
 
