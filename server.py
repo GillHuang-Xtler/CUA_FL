@@ -7,7 +7,7 @@ from federated_learning.datasets.data_distribution import distribute_batches_equ
 from federated_learning.datasets.data_distribution import distribute_batches_noniid_mal
 from federated_learning.utils import average_nn_parameters, fed_average_nn_parameters
 from federated_learning.utils.aggregation import krum_nn_parameters, multi_krum_nn_parameters, bulyan_nn_parameters, trmean_nn_parameters, median_nn_parameters, fgold_nn_parameters
-from federated_learning.utils.attack import reverse_nn_parameters, ndss_nn_parameters, reverse_last_parameters, lie_nn_parameters, free_nn_parameters
+from federated_learning.utils.attack import reverse_nn_parameters, ndss_nn_parameters, reverse_last_parameters, lie_nn_parameters, free_nn_parameters,free_last_nn_parameters
 from federated_learning.utils import convert_distributed_data_into_numpy
 from federated_learning.utils import poison_data
 from federated_learning.utils import identify_random_elements, identify_random_elements_inc_49
@@ -78,7 +78,8 @@ def train_subset_of_clients(epoch, args, clients, poisoned_workers, current_dist
     elif args.get_attack_strategy() == "lie":
         parameters = lie_nn_parameters(parameters, args)
     elif args.get_attack_strategy() == "freerider":
-        parameters = free_nn_parameters(parameters, previous_weight, args)
+        # dict_parameters = free_nn_parameters(parameters, previous_weight, args)
+        dict_parameters = free_last_nn_parameters(parameters, previous_weight, args)
 
     # defenses
 
@@ -86,23 +87,21 @@ def train_subset_of_clients(epoch, args, clients, poisoned_workers, current_dist
     if args.get_aggregation_method() == "fedavg":
         parameters = {client_idx: clients[client_idx].get_nn_parameters() for client_idx in random_workers}
         sizes = {client_idx: clients[client_idx].get_client_datasize() for client_idx in random_workers}
-        new_nn_params = fed_average_nn_parameters(parameters, sizes)
+        new_nn_params = fed_average_nn_parameters(parameters,sizes)
     elif args.get_aggregation_method() == "fedsgd":
-        new_nn_params = average_nn_parameters(parameters)
+        new_nn_params = average_nn_parameters(list(dict_parameters.values()))
     elif args.get_aggregation_method() == "krum":
         new_nn_params = krum_nn_parameters(dict_parameters, args)
     elif args.get_aggregation_method() == "mkrum":
-        dict_parameters = {client_idx: clients[client_idx].get_nn_parameters() for client_idx in random_workers}
         new_nn_params = multi_krum_nn_parameters(dict_parameters, args)
     elif args.get_aggregation_method() == "bulyan":
-        dict_parameters = {client_idx: clients[client_idx].get_nn_parameters() for client_idx in random_workers}
+        # dict_parameters = {client_idx: clients[client_idx].get_nn_parameters() for client_idx in random_workers}
         new_nn_params = bulyan_nn_parameters(dict_parameters, args)
     elif args.get_aggregation_method() == "trmean":
-        new_nn_params = trmean_nn_parameters(parameters, args)
+        new_nn_params = trmean_nn_parameters(list(dict_parameters.values()), args)
     elif args.get_aggregation_method() == "median":
-        new_nn_params = median_nn_parameters(parameters, args)
+        new_nn_params = median_nn_parameters(list(dict_parameters.values()), args)
     elif args.get_aggregation_method() == "fgold":
-        dict_parameters = {client_idx: clients[client_idx].get_nn_parameters() for client_idx in random_workers}
         new_nn_params = fgold_nn_parameters(dict_parameters, args)
 
 

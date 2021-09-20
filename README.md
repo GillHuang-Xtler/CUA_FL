@@ -72,8 +72,15 @@
 - 7193：fashion-iid-sgd-trmean-100-10-0-100, batch_size=4
 - 9140: fashion-iid-avg-none-100-10-0-50
 - 9141: fashion-iid-freerider-none-100-10-2-50
-- 9142: fashion-iid-free-reverse-none-100-10-2-50
-- 9143: fashion-iid-reverse-none-100-10-2-50
+- 9142: fashion-iid-reverse-none-100-10-2-50
+- 9143: fashion-iid-free-reverse-none-100-10-2-50??
+- 9144: fashion-iid-reverseG-none-100-10-2-50
+- 9145: fashion-iid-free-rand-none-100-10-2-50
+- 9146: fashion-iid-free-rand(min-max)-none-100-10-2-50
+- 9147: fashion-iid-free-rand-mkrum-100-10-2-50
+- 9191: fashion-iid-free-rand3-none-100-10-2-50
+- 9192: fashion-iid-free-rand3-mkrum-100-10-2-50
+
 
 
 

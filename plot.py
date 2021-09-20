@@ -23,7 +23,7 @@ def plt_acc():
         for line in lines:
             value = [float(s) for s in line.split(',')]
             X1.append(value[0])
-    print(X1)
+    Y1 = (max(X1)-max(X1))
 
     path2 = './res/9141_results.csv'
     filename2 = path2
@@ -33,9 +33,9 @@ def plt_acc():
         for line in lines:
             value = [float(s) for s in line.split(',')]
             X2.append(value[0])
-    print(X2)
+    Y2 = (max(X1)-max(X2))
 
-    path3='./res/9142_results.csv'
+    path3='./res/9145_results.csv'
     filename3 = path3
     X3 = []
     with open(filename3, 'r') as f:
@@ -43,38 +43,37 @@ def plt_acc():
         for line in lines:
             value = [float(s) for s in line.split(',')]
             X3.append(value[0])
-    print(X3)
+    Y3 = (max(X1)-max(X3))
 
-    # path4='./res/1175_results.csv'
-    # filename4 = path4
-    # X4 = []
-    # with open(filename4, 'r') as f:
-    #     lines = f.readlines()
-    #     for line in lines:
-    #         value = [float(s) for s in line.split(',')]
-    #         X4.append(value[0])
-    # print(X4)
-    # # plt.plot(X4)
-    # #
-    # path5='./res/1176_results.csv'
-    # filename5 = path5
-    # X5 = []
-    # with open(filename5, 'r') as f:
-    #     lines = f.readlines()
-    #     for line in lines:
-    #         value = [float(s) for s in line.split(',')]
-    #         X5.append(value[0])
-    # print(X5)
-    #
-    # path6='./res/1173_results.csv'
-    # filename6 = path6
-    # X6 = []
-    # with open(filename6, 'r') as f:
-    #     lines = f.readlines()
-    #     for line in lines:
-    #         value = [float(s) for s in line.split(',')]
-    #         X6.append(value[0])
-    # print(X6)
+    path4='./res/9147_results.csv'
+    filename4 = path4
+    X4 = []
+    with open(filename4, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X4.append(value[0])
+    Y4 = (max(X1)-max(X4))
+
+    path5='./res/9191_results.csv'
+    filename5 = path5
+    X5 = []
+    with open(filename5, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X5.append(value[0])
+    Y5 = (max(X1)-max(X5))
+
+    path6='./res/9192_results.csv'
+    filename6 = path6
+    X6 = []
+    with open(filename6, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X6.append(value[0])
+    Y6 = (max(X1)-max(X6))
     #
     # path7='./res/1177_results.csv'
     # filename7 = path7
@@ -115,22 +114,34 @@ def plt_acc():
     #         value = [float(s) for s in line.split(',')]
     #         X10.append(value[0])
     # print(X10)
-
+    plt.figure(1)
+    # plt.subplot(211)
     plt.plot(X1, label='avg')
-    plt.plot(X2, label='free')
-    plt.plot(X3, label='free-flip')
-    # plt.plot(X4, color='green', label='Reduce-class-only')
-    # plt.plot(X5, color='orange', label='Reduce-class-musto')
-    # plt.plot(X6, color='purple', label='Reduce-class-mustp')
+    # plt.plot(X2, label='free')
+    plt.plot(X3, label='free-rand')
+    plt.plot(X4, label='free-rand-mkrum')
+    plt.plot(X5, label='free-rand3')
+    plt.plot(X6,  label='free-rand3-mkrum')
     # plt.plot(X7, color='green', label='Reduce-class-quitp')
     # plt.plot(X8, color='skyblue', label='Reduce-class-quito')
     # plt.plot(X9, color='purple', label='Reduce-class-introp')
     # plt.plot(X10, color='gray', label='Reduce-class-introo')
-
-
     plt.legend()
     plt.xlabel('GLOBAL ROUNDS')
     plt.ylabel('ACCURACY')
+
+
+
+    # plt.subplot(212)
+    plt.figure(2)
+    index_ls = ['avg',"free-rand", "free-rand-mkrum", "free-rand3", "free-rand3-mkrum"]
+    asr_ls = [Y1, Y3, Y4, Y5, Y6]
+    plt.bar(index_ls, asr_ls )
+
+    plt.legend()
+    plt.xlabel('DIFFERENT STRATEGIES')
+    plt.ylabel('ASR')
+
 
     plt.show()
 

@@ -47,11 +47,11 @@ class Arguments:
         self.epoch_save_end_suffix = "end"
         self.get_poison_effort = 'full'
         self.num_workers = 100
-        self.aggregation = "fedsgd"
-        self.attack = "reverse"
+        self.aggregation = "mkrum"
+        self.attack = "freerider"
         self.num_attackers = 2
         self.dev_type = 'sign'
-        self.num_reverse_layers = 5
+        self.num_reverse_layers = 3
         # self.num_poisoned_workers = 10
         self.lie_z_value = {1:68947,3:0.69847, 5:0.7054, 8:0.71904, 10:0.72575, 12:0.73891}
 

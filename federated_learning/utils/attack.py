@@ -16,8 +16,8 @@ def reverse_nn_parameters(parameters, previous_weight, args):
 
     for params in parameters[len(parameters)-args.get_num_attackers():]:
         for name in parameters[0].keys():
-            # params[name] = (2*previous_weight[name].data - params[name].data)
-            params[name] = - params[name].data
+            params[name] = (2*previous_weight[name].data - params[name].data)
+            # params[name] = - params[name].data
         new_parameters.append(params)
 
     return new_parameters
@@ -197,10 +197,40 @@ def free_nn_parameters(parameters, previous_weight, args):
 
     tmp = {}
     for name in previous_weight.keys():
-        tmp[name] = (previous_weight[name].data)
+        max_value = torch.max(previous_weight[name].data)
+        min_value = torch.min(previous_weight[name].data)
+        # print(previous_weight[name].data.size())
+        tmp[name] = (torch.rand(previous_weight[name].data.size()))-0.5
+        # tmp[name] = (torch.rand(previous_weight[name].data.size()))*(max_value-min_value) + min_value
 
     for i in range(args.get_num_attackers()):
         new_parameters.append(tmp)
     args.get_logger().info("the last 2 client do not have any data for training")
+    dict_parameters = {client_idx: new_parameters[client_idx] for client_idx in range(len(parameters))}
+    return dict_parameters
 
-    return new_parameters
+
+def free_last_nn_parameters(parameters, previous_weight, args):
+    """
+    generate reverse all layers parameters.
+
+    :param parameters: nn model named parameters
+    :type parameters: list
+    """
+
+    args.get_logger().info("Data Free last layer Untargeted Attack")
+    layers = list(parameters[0].keys())
+    new_parameters = []
+    for params in parameters[:len(parameters)-args.get_num_attackers()]:
+        new_parameters.append(params)
+
+    for params in parameters[len(parameters)-args.get_num_attackers():]:
+        for name in parameters[0].keys():
+            if name in layers[-(args.get_num_reverse_layers()):]:
+                params[name] = (torch.rand(previous_weight[name].data.size()))-0.5
+            else:
+                params[name] = params[name]
+        new_parameters.append(params)
+
+    dict_parameters = {client_idx: new_parameters[client_idx] for client_idx in range(len(parameters))}
+    return dict_parameters
