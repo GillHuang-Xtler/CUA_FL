@@ -6,6 +6,10 @@ import random
 from ..datasets import Dataset
 import torch.utils.data
 
+from torch.utils.data import DataLoader
+from torch.utils.data import TensorDataset
+import numpy as np
+
 
 def generate_data_loaders_from_distributed_dataset(distributed_dataset, batch_size):
     """
@@ -68,8 +72,25 @@ def load_malicious_data_loader(logger, args):
 def generate_train_loader(args, dataset):
     train_dataset = dataset.get_train_dataset()
     X, Y = shuffle_data(args, train_dataset)
-
     return dataset.get_data_loader_from_data(args.get_batch_size(), X, Y)
+
+def generate_train_loader_mal(args, dataset):
+    X = []
+    Y = []
+    for c in dataset:
+        X.append(c[0].detach().numpy())
+        Y.append(c[1].detach().numpy())
+    X = np.array(X)
+    Y = np.array(Y)
+
+    batch_size = args.get_batch_size()
+
+    X_torch = torch.from_numpy(X).float()
+
+    Y_torch = torch.from_numpy(Y).long()
+    dataset = TensorDataset(X_torch, Y_torch)
+
+    return DataLoader(dataset, batch_size=batch_size)
 
 def generate_benign_loader(args, dataset):
     benign_dataset = dataset.get_benign_dataset()
@@ -79,6 +100,12 @@ def generate_benign_loader(args, dataset):
 
 def generate_malicious_loader(args, dataset):
     malicious_dataset = dataset.get_malicious_dataset()
+    X, Y = shuffle_data(args, malicious_dataset)
+
+    return dataset.get_data_loader_from_data(args.get_batch_size(), X, Y)
+
+def generate_free_loader(args, dataset):
+    malicious_dataset = dataset.get_free_dataset()
     X, Y = shuffle_data(args, malicious_dataset)
 
     return dataset.get_data_loader_from_data(args.get_batch_size(), X, Y)
@@ -133,8 +160,11 @@ def shuffle_data_sample(args, dataset):
 
 def shuffle_data(args, dataset):
     data = list(zip(dataset[0], dataset[1]))
+
     random.shuffle(data)
+
     X, Y = zip(*data)
+
     X = numpy.asarray(X)
     Y = numpy.asarray(Y)
 

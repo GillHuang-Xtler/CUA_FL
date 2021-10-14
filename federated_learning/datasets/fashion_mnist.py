@@ -60,3 +60,18 @@ class FashionMNISTDataset(Dataset):
         self.get_args().get_logger().debug("Finished loading Fashion MNIST test data")
 
         return test_data
+
+    def load_free_dataset(self):
+        self.get_args().get_logger().debug("Loading Fashion MNIST free data")
+
+        train_dataset = datasets.FashionMNIST(self.get_args().get_data_path(), train=True, download=True,
+                                              transform=transforms.Compose([transforms.ToTensor()]))
+        benign_dataset, malicious_dataset = torch.utils.data.random_split(train_dataset, [59400, 600])
+
+        train_loader = DataLoader(malicious_dataset, batch_size=len(train_dataset))
+
+        train_data = self.get_tuple_from_data_loader(train_loader)
+
+        self.get_args().get_logger().debug("Finished loading Fashion MNIST free data")
+
+        return train_data

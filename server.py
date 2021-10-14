@@ -7,7 +7,7 @@ from federated_learning.datasets.data_distribution import distribute_batches_equ
 from federated_learning.datasets.data_distribution import distribute_batches_noniid_mal
 from federated_learning.utils import average_nn_parameters, fed_average_nn_parameters
 from federated_learning.utils.aggregation import krum_nn_parameters, multi_krum_nn_parameters, bulyan_nn_parameters, trmean_nn_parameters, median_nn_parameters, fgold_nn_parameters
-from federated_learning.utils.attack import reverse_nn_parameters, ndss_nn_parameters, reverse_last_parameters, lie_nn_parameters, free_nn_parameters,free_last_nn_parameters
+from federated_learning.utils.attack import reverse_nn_parameters, ndss_nn_parameters, reverse_last_parameters, lie_nn_parameters, free_nn_parameters,free_last_nn_parameters, free_rand_nn_parameters
 from federated_learning.utils import convert_distributed_data_into_numpy
 from federated_learning.utils import poison_data
 from federated_learning.utils import identify_random_elements, identify_random_elements_inc_49
@@ -17,6 +17,8 @@ from federated_learning.utils import load_test_data_loader
 from federated_learning.utils import generate_experiment_ids
 from federated_learning.utils import convert_results_to_csv
 from client import Client
+from federated_learning.nets import NetGenMnist
+import math
 import contribution_evaluation
 import copy
 import plot
@@ -26,7 +28,7 @@ from federated_learning.worker_selection.random import RandomSelectionStrategy
 
 
 
-def train_subset_of_clients(epoch, args, clients, poisoned_workers, current_distribution):
+def train_subset_of_clients(epoch, args, clients, poisoned_workers):
     """
     Train a subset of clients per round.
 
@@ -42,12 +44,13 @@ def train_subset_of_clients(epoch, args, clients, poisoned_workers, current_dist
     kwargs = args.get_round_worker_selection_strategy_kwargs()
     kwargs["current_epoch_number"] = epoch
 
-    if epoch >0:
-        random_workers = args.get_round_worker_selection_strategy().select_round_workers_minus_1(
+    if args.get_num_attackers() > 0:
+        random_workers = args.get_round_worker_selection_strategy().select_round_workers(
             list(range(args.get_num_workers())),
             poisoned_workers,
             kwargs)
-        random_workers.append(random.randint(90,99))
+        # random_workers.append(random.randint(90,99))
+        # random_workers.extend([98, 99])
     else:
         random_workers = args.get_round_worker_selection_strategy().select_round_workers(
             list(range(args.get_num_workers())),
@@ -76,10 +79,10 @@ def train_subset_of_clients(epoch, args, clients, poisoned_workers, current_dist
     elif args.get_attack_strategy() == "ndss":
         parameters = ndss_nn_parameters(parameters, args)
     elif args.get_attack_strategy() == "lie":
-        parameters = lie_nn_parameters(parameters, args)
+        dict_parameters = lie_nn_parameters(dict_parameters, args)
     elif args.get_attack_strategy() == "freerider":
-        # dict_parameters = free_nn_parameters(parameters, previous_weight, args)
-        dict_parameters = free_last_nn_parameters(parameters, previous_weight, args)
+        dict_parameters = free_rand_nn_parameters(parameters, previous_weight, args)
+        # dict_parameters = free_last_nn_parameters(parameters, previous_weight, args)
 
     # defenses
 
@@ -93,7 +96,7 @@ def train_subset_of_clients(epoch, args, clients, poisoned_workers, current_dist
     elif args.get_aggregation_method() == "krum":
         new_nn_params = krum_nn_parameters(dict_parameters, args)
     elif args.get_aggregation_method() == "mkrum":
-        new_nn_params = multi_krum_nn_parameters(dict_parameters, args)
+        new_nn_params = multi_krum_nn_parameters(dict_parameters, previous_weight, args)
     elif args.get_aggregation_method() == "bulyan":
         # dict_parameters = {client_idx: clients[client_idx].get_nn_parameters() for client_idx in random_workers}
         new_nn_params = bulyan_nn_parameters(dict_parameters, args)
@@ -106,27 +109,6 @@ def train_subset_of_clients(epoch, args, clients, poisoned_workers, current_dist
 
 
     if args.contribution_measurement_metric == 'None':
-        for client in clients:
-            args.get_logger().info("Updating parameters on client #{}", str(client.get_client_index()))
-            client.update_nn_parameters(new_nn_params)
-
-    elif args.contribution_measurement_metric == 'Influence' and (args.contribution_measurement_round == epoch or args.contribution_measurement_round == epoch+1 or args.contribution_measurement_round == epoch+2 or args.contribution_measurement_round == epoch+3 or args.contribution_measurement_round == epoch+4):
-        result_deletion = contribution_evaluation.calculate_influence(args, clients, random_workers, epoch)
-        result_deletion_acc = [i[0] for i in result_deletion]
-        result_deletion_loss = [i[1] for i in result_deletion]
-        for client in clients:
-            args.get_logger().info("Updating parameters on client #{}", str(client.get_client_index()))
-            client.update_nn_parameters(new_nn_params)
-
-        accuracy, loss, class_precision, class_recall = clients[0].test()
-        Influence_acc = result_deletion_acc[:] = [accuracy - x[0] for x in result_deletion]
-        Influence_loss = result_deletion_loss[:] = [loss - x[1] for x in result_deletion]
-        args.get_logger().info("Influence on clients: by acc: #{}, by loss: #{} on selected #{}", str(Influence_acc), str(Influence_loss), str(random_workers))
-
-    elif args.contribution_measurement_metric == 'Shapley' and 49 in random_workers:
-        shapley_acc, shapley_loss = contribution_evaluation.calculate_shapley_values(args, clients, random_workers, epoch)
-        args.get_logger().info("Shapley on clients: by acc: #{}, by loss: #{} on selected #{}", str(shapley_acc), str(shapley_loss), str(random_workers))
-
         for client in clients:
             args.get_logger().info("Updating parameters on client #{}", str(client.get_client_index()))
             client.update_nn_parameters(new_nn_params)
@@ -145,11 +127,15 @@ def create_clients(args, train_data_loaders, test_data_loader, distributed_train
     Create a set of clients.
     """
     clients = []
-    for idx in range(args.get_num_workers()):
-        clients.append(Client(args, idx, train_data_loaders[idx], test_data_loader, distributed_train_dataset[idx]))
-
+    if args.get_attack_strategy() == "cua":
+        for idx in range(int(args.get_num_workers()*(1-args.get_mal_prop()))):
+            clients.append(Client(args = args, client_idx = idx, is_mal= 'False', train_data_loader = train_data_loaders[idx], test_data_loader = test_data_loader, distributed_train_dataset = distributed_train_dataset[idx], gen_net = NetGenMnist(z_dim=args.n_dim)))
+        for idx in range(int(args.get_num_workers()*(1-args.get_mal_prop())),int(args.get_num_workers())):
+            clients.append(Client(args = args, client_idx = idx, is_mal= 'CUA', train_data_loader = train_data_loaders[idx], test_data_loader = test_data_loader, distributed_train_dataset = distributed_train_dataset[idx], gen_net = NetGenMnist(z_dim=args.n_dim)))
+    else:
+        for idx in range(int(args.get_num_workers())):
+            clients.append(Client(args = args, client_idx = idx, is_mal= 'False', train_data_loader = train_data_loaders[idx], test_data_loader = test_data_loader, distributed_train_dataset = distributed_train_dataset[idx], gen_net = NetGenMnist(z_dim=args.n_dim)))
     return clients
-
 
 def run_machine_learning(clients, args, poisoned_workers):
     """
@@ -157,32 +143,10 @@ def run_machine_learning(clients, args, poisoned_workers):
     """
     epoch_test_set_results = []
     worker_selection = []
-    current_distribution = np.ones(10)
-    current_distribution[1] = 50
-    accs = 0.8+np.random.rand(50)
-    current_probability = (0.3*np.random.rand(50)).tolist()
-    _tmp1 = [1,30,1,1,1,1,1,1,1,1]
-    _tmp2 = [1,0,1,1,1,1,1,1,1,1]
+
 
     for epoch in range(1, args.get_num_epochs() + 1):
-        # results, workers_selected, current_probability = train_subset_of_clients_sv(epoch, args, clients, poisoned_workers, current_probability)
-        # results, workers_selected = train_subset_of_clients_fedfast(epoch, args, clients, poisoned_workers, current_distribution)
-        # results, workers_selected = train_subset_of_clients_new(epoch, args, clients, poisoned_workers, current_distribution)
-        results, workers_selected = train_subset_of_clients(epoch, args, clients, poisoned_workers, current_distribution)
-        # results, workers_selected, accs = train_subset_of_clients_tifl(epoch, args, clients, poisoned_workers, accs)
-        # if 49 in workers_selected:
-        #     _current_distribution = [i*(epoch)*100 for i in current_distribution]
-        #     _current_distribution = [_current_distribution[i]+_tmp1[i]*100 for i in range(10)]
-        #     current_distribution = norm(_current_distribution)
-        # else:
-        #     _current_distribution = [i*(epoch)*100 for i in current_distribution]
-        #     _current_distribution = [_current_distribution[i]+_tmp2[i]*100 for i in range(10)]
-        #     current_distribution = norm(_current_distribution)
-        # print('current_distribution:'+ str(current_distribution))
-        _selected_distribution = [clients[idx].get_client_distribution() for idx in workers_selected]
-        selected_distribution = np.sum([i for i in _selected_distribution], axis = 0)
-        current_distribution = [current_distribution[i]+selected_distribution[i] for i in range(len(current_distribution))]
-        # torch.cuda.synchronize()
+        results, workers_selected = train_subset_of_clients(epoch, args, clients, poisoned_workers)
         epoch_test_set_results.append(results)
         worker_selection.append(workers_selected)
 

@@ -6,10 +6,12 @@ from federated_learning.schedulers import MinCapableStepLR
 import os
 import numpy
 import copy
+from federated_learning.utils import generate_train_loader, generate_train_loader_mal
+import torch.nn.functional as F
 
 class Client:
 
-    def __init__(self, args, client_idx, train_data_loader, test_data_loader, distributed_train_dataset):
+    def __init__(self, args, client_idx, is_mal, train_data_loader, test_data_loader, distributed_train_dataset, gen_net):
         """
         :param args: experiment arguments
         :type args: Arguments
@@ -22,6 +24,8 @@ class Client:
         """
         self.args = args
         self.client_idx = client_idx
+        self.is_mal = is_mal
+        self.gen_net = gen_net
 
         self.device = self.initialize_device()
         self.set_net(self.load_default_model())
@@ -57,6 +61,15 @@ class Client:
         """
         self.net = net
         self.net.to(self.device)
+
+    def get_is_mal(self):
+        """
+        Return if this client is attacker
+
+        :param net: torch.nn
+        """
+
+        return self.is_mal
 
     def load_default_model(self):
         """
@@ -130,38 +143,141 @@ class Client:
     def get_client_datasize(self):
         return len(self.distributed_train_dataset[1])
 
+    def get_init_balanced_noise(self, gen_net, num_class=10, factor=1):
+        num_total = 50 * 500
+
+        noise = torch.randn(num_total, self.args.n_dim).cpu()
+        x_query = gen_net(noise)
+        return x_query
+
+        # num_each = int(num_total / num_class)
+        # count_each = torch.zeros(10).long()
+        # res_noise = None
+        # r = 0
+        # while True:
+        #     noise = torch.randn(1000, self.args.n_dim).cpu()
+        #     x_query = gen_net(noise)
+        #     with torch.no_grad():
+        #         v_output = self.net(x_query)
+        #         v_output_p = F.softmax(v_output, dim=1)
+        #         v_confidence, v_predicted = torch.max(v_output_p, 1)
+        #     idx_c, cc = torch.unique(v_predicted, return_counts=True)
+        #
+        #     for i, e in enumerate(count_each, 0):
+        #         if e < num_each:
+        #             idx_i = (v_predicted == i).nonzero()
+        #             idx_i = idx_i.view(idx_i.shape[0])
+        #             e = e.int()
+        #
+        #         if res_noise is None:
+        #             res_noise = noise[idx_i][:num_each - e]
+        #         else:
+        #             res_noise = torch.cat((res_noise, noise[idx_i][:num_each - e]), 0)
+        #     count_each[idx_c] += cc
+        #
+        #     if r % 20 == 0:
+        #         print("generated samples:", count_each)
+        #         print("progress:", res_noise.shape[0], '/', num_total)
+        #     r += 1
+        #     if res_noise.shape[0] >= num_total * factor:
+        #         break
+        # num_remainder = num_total - res_noise.shape[0]
+        # if num_remainder > 0:
+        #     if self.args.cuda:
+        #         noise = torch.randn(num_remainder, self.z_dim).cuda()
+        #     else:
+        #         noise = torch.randn(num_remainder, self.z_dim).cpu()
+        #     res_noise = torch.cat((res_noise, noise), 0)
+        # print("generation rounds:", r, ", init query number:", r * 1000 + num_remainder)
+        # # comm.save_results("ini_num_query = " + str(r * 1000 + num_remainder), self.args.res_filename)
+        #
+        # index = torch.randperm(res_noise.shape[0])
+        # res_noise = res_noise[index]
+        # res = gen_net(res_noise)
+        # return res
+
+    def inference_global_model(self, noise_images):
+        mal_dataset = []
+        for input in noise_images:
+            input_temp = input.unsqueeze(0)
+            output = self.net(input_temp)
+            _, predicted = torch.max(output.data, 1)
+            mal_dataset.append([input, predicted.data.squeeze(0)])
+        noise_images_labels = generate_train_loader_mal(self.args, mal_dataset)
+        return noise_images_labels
+
+    def generate_noise_images(self, args, gen_net):
+        noise = torch.randn(1000, args.n_dim)
+        noise_images = gen_net(noise)
+
+        return noise_images
+
     def train(self, epoch):
         """
         :param epoch: Current epoch #
         :type epoch: int
         """
-        self.net.train()
+        if self.is_mal == 'False':
+            self.net.train()
 
-        # save model
-        if self.args.should_save_model(epoch):
-            self.save_model(epoch, self.args.get_epoch_save_start_suffix())
+            # save model
+            if self.args.should_save_model(epoch):
+                self.save_model(epoch, self.args.get_epoch_save_start_suffix())
 
-        running_loss = 0.0
-        for i, (inputs, labels) in enumerate(self.train_data_loader, 0):
-            inputs, labels = inputs.to(self.device), labels.to(self.device)
+            running_loss = 0.0
+            for i, (inputs, labels) in enumerate(self.train_data_loader, 0):
+                inputs, labels = inputs.to(self.device), labels.to(self.device)
 
-            # zero the parameter gradients
-            self.optimizer.zero_grad()
+                # zero the parameter gradients
+                self.optimizer.zero_grad()
 
-            # forward + backward + optimize
-            outputs = self.net(inputs)
-            loss = self.loss_function(outputs, labels)
-            loss.backward()
-            self.optimizer.step()
+                # forward + backward + optimize
+                outputs = self.net(inputs)
+                loss = self.loss_function(outputs, labels)
+                loss.backward()
+                self.optimizer.step()
 
-            # print statistics
-            running_loss += loss.item()
-            if i % self.args.get_log_interval() == 0:
-                self.args.get_logger().info('[%d, %5d] loss: %.3f' % (epoch, i, running_loss / self.args.get_log_interval()))
+                # print statistics
+                running_loss += loss.item()
+                if i % self.args.get_log_interval() == 0:
+                    self.args.get_logger().info('[%d, %5d] loss: %.3f' % (epoch, i, running_loss / self.args.get_log_interval()))
 
-                running_loss = 0.0
+                    running_loss = 0.0
 
-        self.scheduler.step()
+            self.scheduler.step()
+
+        elif self.is_mal == 'CUA':
+            self.net.train()
+            print("mal train")
+            # save model
+            if self.args.should_save_model(epoch):
+                self.save_model(epoch, self.args.get_epoch_save_start_suffix())
+
+
+            noise_images = self.get_init_balanced_noise(self.gen_net, num_class=10, factor=1)
+
+            mal_data_loader = self.inference_global_model(noise_images = noise_images)
+
+            running_loss = 0.0
+            for i, (inputs, labels) in enumerate(mal_data_loader, 0):
+                inputs, labels = inputs.to(self.device), labels.to(self.device)
+
+                # zero the parameter gradients
+                self.optimizer.zero_grad()
+
+                # forward + backward + optimize
+                outputs = self.net(inputs)
+                loss = self.loss_function(outputs, labels)
+                loss.backward()
+                self.optimizer.step()
+
+                # print statistics
+                running_loss += loss.item()
+                if i % self.args.get_log_interval() == 0:
+                    self.args.get_logger().info(
+                        '[%d, %5d] loss: %.3f' % (epoch, i, running_loss / self.args.get_log_interval()))
+
+                    running_loss = 0.0
 
         # save model
         if self.args.should_save_model(epoch):

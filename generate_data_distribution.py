@@ -8,7 +8,7 @@ from federated_learning.datasets import FashionMNISTDataset
 from federated_learning.datasets import MNISTDataset
 from federated_learning.datasets import STL10Dataset
 # from federated_learning.datasets import TRECDataset
-from federated_learning.utils import generate_train_loader, generate_benign_loader, generate_malicious_loader
+from federated_learning.utils import generate_train_loader, generate_benign_loader, generate_malicious_loader, generate_free_loader
 from federated_learning.utils import generate_test_loader
 from federated_learning.utils import save_data_loader_to_file
 
@@ -42,6 +42,7 @@ if __name__ == '__main__':
     TRAIN_DATA_LOADER_FILE_PATH = "data_loaders/fashion-mnist/train_data_loader.pickle"
     BENIGN_DATA_LOADER_FILE_PATH = "data_loaders/fashion-mnist/benign_data_loader.pickle"
     MALICIOUS_DATA_LOADER_FILE_PATH = "data_loaders/fashion-mnist/malicious_data_loader.pickle"
+    FREE_DATA_LOADER_FILE_PATH = "data_loaders/fashion-mnist/free_data_loader.pickle"
     TEST_DATA_LOADER_FILE_PATH = "data_loaders/fashion-mnist/test_data_loader.pickle"
 
     if not os.path.exists("data_loaders/fashion-mnist"):
@@ -51,6 +52,7 @@ if __name__ == '__main__':
     test_data_loader = generate_test_loader(args, dataset)
     benign_data_loader = generate_benign_loader(args, dataset)
     malicious_data_loader = generate_malicious_loader(args, dataset)
+    free_data_loader = generate_free_loader(args, dataset)
 
 
     with open(TRAIN_DATA_LOADER_FILE_PATH, "wb") as f:
@@ -64,6 +66,9 @@ if __name__ == '__main__':
 
     with open(MALICIOUS_DATA_LOADER_FILE_PATH, "wb") as f:
         save_data_loader_to_file(malicious_data_loader, f)
+
+    with open(FREE_DATA_LOADER_FILE_PATH, "wb") as f:
+        save_data_loader_to_file(free_data_loader, f)
 
     # ---------------------------------
     # ------------ MNIST --------------

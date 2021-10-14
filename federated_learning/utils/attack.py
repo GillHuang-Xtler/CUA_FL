@@ -45,7 +45,7 @@ def reverse_last_parameters(parameters, previous_weight, args):
 
     return new_parameters
 
-def lie_nn_parameters(parameters, args):
+def lie_nn_parameters(dict_parameters, args):
     """
     generate lie parameters.
 
@@ -53,31 +53,36 @@ def lie_nn_parameters(parameters, args):
     :type parameters: list
     """
 
-    args.get_logger().info("Averaging parameters on model lie attackers")
-    new_parameters = []
-    for params in parameters[:len(parameters)-args.get_num_attackers()]:
-        new_parameters.append(params)
-
-    # print("benign: "+ str(len(new_parameters)))
-
     z_value = args.get_lie_z_value()
     mean_params = {}
     std_params = {}
-    for name in parameters[0].keys():
-        mean_params[name] = sum([param[name].data for param in parameters])/len(parameters)
+    for name in dict_parameters[list(dict_parameters.keys())[0]].keys():
+        mean_params[name] = sum([param[name].data for param in dict_parameters.values()])/len(dict_parameters.values())
         _std_params = []
-        for param in parameters:
+        for param in dict_parameters.values():
             _std_params.append(param[name].data)
-        val = torch.stack(_std_params, 0)
+        val = torch.stack(_std_params)
         std_params[name] = torch.std(val.float())
 
-    mal_param = {}
-    for name in parameters[0].keys():
-        mal_param[name] = mean_params[name] + z_value[args.get_num_attackers()] * std_params[name]
+    args.get_logger().info("Averaging parameters on model lie attackers")
+    new_parameters = {}
+    for client_idx in dict_parameters.keys():
+        if client_idx < args.get_num_workers()*(1-args.get_mal_prop()):
+            new_parameters[client_idx] = dict_parameters[client_idx]
+        else:
+            mal_param = {}
+            for name in dict_parameters[list(dict_parameters.keys())[0]].keys():
+                mal_param[name] = mean_params[name] + z_value * std_params[name]
+            new_parameters[client_idx] = mal_param
 
-    # [new_parameters.append(mal_param) for i in range(args.get_num_attackers())]
-    new_parameters.append(mal_param)
-    # print("all: "+ str(len(new_parameters)))
+    # mal_param = {}
+    # for name in dict_parameters[list(dict_parameters.keys())[0]].keys():
+    #     mal_param[name] = mean_params[name] + z_value * std_params[name]
+    #
+    # # [new_parameters[i+int(args.get_num_workers()*(1-args.get_mal_prop()))]] = mal_param for i in range(int(args.get_num_workers()*args.get_mal_prop()))]
+    # for i in range(int(args.get_num_workers()*args.get_mal_prop())):
+    #     new_parameters[ i+ int(args.get_num_workers()*0.1 * (1 - args.get_mal_prop()))] = mal_param
+
 
     return new_parameters
 
@@ -197,6 +202,29 @@ def free_nn_parameters(parameters, previous_weight, args):
 
     tmp = {}
     for name in previous_weight.keys():
+        tmp[name] = previous_weight[name].data
+
+    for i in range(args.get_num_attackers()):
+        new_parameters.append(tmp)
+    args.get_logger().info("the last 2 client do not have any data for training")
+    dict_parameters = {client_idx: new_parameters[client_idx] for client_idx in range(len(parameters))}
+    return dict_parameters
+
+def free_rand_nn_parameters(parameters, previous_weight, args):
+    """
+    generate reverse all layers parameters.
+
+    :param parameters: nn model named parameters
+    :type parameters: list
+    """
+
+    args.get_logger().info("Data Free Untargeted Attack")
+    new_parameters = []
+    for params in parameters[:len(parameters)-args.get_num_attackers()]:
+        new_parameters.append(params)
+
+    tmp = {}
+    for name in previous_weight.keys():
         max_value = torch.max(previous_weight[name].data)
         min_value = torch.min(previous_weight[name].data)
         # print(previous_weight[name].data.size())
@@ -205,10 +233,9 @@ def free_nn_parameters(parameters, previous_weight, args):
 
     for i in range(args.get_num_attackers()):
         new_parameters.append(tmp)
-    args.get_logger().info("the last 2 client do not have any data for training")
+    args.get_logger().info("the last 2 client do not have any data for training and add random factor")
     dict_parameters = {client_idx: new_parameters[client_idx] for client_idx in range(len(parameters))}
     return dict_parameters
-
 
 def free_last_nn_parameters(parameters, previous_weight, args):
     """

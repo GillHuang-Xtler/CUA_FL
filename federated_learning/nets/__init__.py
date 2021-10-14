@@ -6,3 +6,4 @@ from .cifar_10_resnet import Cifar10ResNet
 from .cifar_100_vgg import Cifar100VGG
 from .mnist_cnn import MNISTCNN
 from .stl_10_vgg import STL10VGG
+from .mnist_gen_cnn import NetGenMnist

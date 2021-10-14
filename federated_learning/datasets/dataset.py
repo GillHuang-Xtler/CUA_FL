@@ -13,6 +13,8 @@ class Dataset:
 		self.test_dataset = self.load_test_dataset()
 		self.benign_dataset = self.load_benign_dataset()
 		self.malicious_dataset = self.load_malicious_dataset()
+		self.free_dataset = self.load_free_dataset()
+
 
 	def get_args(self):
 		"""
@@ -53,6 +55,14 @@ class Dataset:
 		:return: tuple
 		"""
 		return self.malicious_dataset
+
+	def get_free_dataset(self):
+		"""
+		Returns the test dataset.
+
+		:return: tuple
+		"""
+		return self.free_dataset
 
 	@abstractmethod
 	def load_train_dataset(self):

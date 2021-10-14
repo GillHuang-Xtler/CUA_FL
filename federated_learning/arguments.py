@@ -4,6 +4,7 @@ from .nets import Cifar100ResNet
 from .nets import FashionMNISTResNet
 from .nets import Cifar10ResNet
 from .nets import Cifar100VGG
+from .nets import MNISTCNN
 from .worker_selection import BeforeBreakpoint
 from .worker_selection import AfterBreakpoint
 from .worker_selection import PoisonerProbability
@@ -20,19 +21,19 @@ class Arguments:
     def __init__(self, logger):
         self.logger = logger
 
-        self.batch_size = 4
+        self.batch_size = 10
         self.test_batch_size = 1000
-        self.epochs = 50
-        self.lr = 0.001
-        self.momentum = 0.9
+        self.epochs = 100
+        self.lr = 0.01
+        self.momentum = 0.5
         self.cuda = False
         self.shuffle = False
-        self.log_interval = 100
+        self.log_interval = 10
         self.kwargs = {}
         self.contribution_measurement_round = 150
         self.contribution_measurement_metric = 'None'
-        self.scheduler_step_size = 10
-        self.scheduler_gamma = 0.1
+        self.scheduler_step_size = 50
+        self.scheduler_gamma = 0.5
         self.min_lr = 1e-10
         self.similarity_epsilon = 0.0005
 
@@ -47,15 +48,19 @@ class Arguments:
         self.epoch_save_end_suffix = "end"
         self.get_poison_effort = 'full'
         self.num_workers = 100
-        self.aggregation = "mkrum"
-        self.attack = "freerider"
-        self.num_attackers = 2
+        self.aggregation = "fedsgd"
+        self.attack = "lie"
+        self.num_attackers = 0
         self.dev_type = 'sign'
+        self.mal_prop = 0.2
         self.num_reverse_layers = 3
         # self.num_poisoned_workers = 10
-        self.lie_z_value = {1:68947,3:0.69847, 5:0.7054, 8:0.71904, 10:0.72575, 12:0.73891}
+        self.lie_z_value = 1.5
+        self.n_dim = 128
+        # self.lie_z_value = {1:0.68947, 2:0.68947, 3:0.69847, 5:0.7054, 8:0.71904,10:0.72575, 12:0.73891}
 
-        self.distribution_method = "iid"
+
+        self.distribution_method = "noniid_2"
 
         # self.net = Cifar10CNN
         # self.net = Cifar10ResNet
@@ -63,11 +68,15 @@ class Arguments:
         # self.net = FashionMNISTResNet
         # self.net = Cifar100ResNet
         # self.net = Cifar100VGG
+        # self.net = MNISTCNN
 
         self.num_classes = 10
 
         # self.train_data_loader_pickle_path = "data_loaders/cifar10/train_data_loader.pickle"
         # self.test_data_loader_pickle_path = "data_loaders/cifar10/test_data_loader.pickle"
+
+        # self.train_data_loader_pickle_path = "data_loaders/mnist/train_data_loader.pickle"
+        # self.test_data_loader_pickle_path = "data_loaders/mnist/test_data_loader.pickle"
 
         self.train_data_loader_pickle_path = "data_loaders/fashion-mnist/train_data_loader.pickle"
         self.test_data_loader_pickle_path = "data_loaders/fashion-mnist/test_data_loader.pickle"
@@ -109,6 +118,9 @@ class Arguments:
 
     def get_lie_z_value(self):
         return self.lie_z_value
+
+    def get_mal_prop(self):
+        return self.mal_prop
 
     def get_distribution_method(self):
         return self.distribution_method

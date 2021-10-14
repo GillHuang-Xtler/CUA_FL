@@ -80,6 +80,11 @@
 - 9147: fashion-iid-free-rand-mkrum-100-10-2-50
 - 9191: fashion-iid-free-rand3-none-100-10-2-50
 - 9192: fashion-iid-free-rand3-mkrum-100-10-2-50
+- 9211: fashion-iid-free-none-mkrum-100-10-2-50
+- 10131: fashion-non2-sgd-none-100-10-0-100
+- 10133: fashion-none2-sgd-alg-100-20-0-100
+- 10141: fashion-none2-sgd-lie-100-20-0-100
+
 
 
 

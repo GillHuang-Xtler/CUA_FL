@@ -2,7 +2,7 @@ import torch
 import numpy as np
 from federated_learning.arguments import Arguments
 
-def multi_krum_nn_parameters(dict_parameters, args):
+def multi_krum_nn_parameters(dict_parameters, previous_weight, args):
     """
     multi krum passed parameters.
 
@@ -17,14 +17,20 @@ def multi_krum_nn_parameters(dict_parameters, args):
     candidate_num = 7
     distances = {}
     tmp_parameters = {}
+    pre_distance = []
     for idx, parameter in dict_parameters.items():
         distance = []
         for _idx, _parameter in dict_parameters.items():
-            dis = [torch.norm((parameter[name].data - _parameter[name].data).float())**2 for name in parameter.keys()]
+            dis = [torch.norm((_parameter[name].data - parameter[name].data).float()) for name in parameter.keys()]
             distance.append(sum(dis))
+            # pre_distance.append(sum(pre_dis))
             tmp_parameters[idx] = parameter
+        # pre_dis = [torch.norm((_parameter[name].data - previous_weight[name].data).float()) for name in parameter.keys()]
+        # pre_distance.append(sum(pre_dis))
         distance.sort()
-        distances[idx] = sum(distance[:candidate_num])
+        args.get_logger().info("Distance #{}", str(distance))
+        distances[idx] = sum(distance[:candidate_num+1])
+
     args.get_logger().info("Distances #{} on client #{}", str(distances.values()),
                            str(distances.keys()))
     sorted_distance = dict(sorted(distances.items(), key=lambda item: item[1]))
@@ -58,6 +64,8 @@ def krum_nn_parameters(dict_parameters, args):
             tmp_parameters[idx] = parameter
         # distance = sum(torch.Tensor(distance).float())
         distance.sort()
+        args.get_logger().info("Distances #{}", str(distance))
+        # print("benign distance: " + str(distance))
         distances[idx] = sum(distance[:candidate_num])
     args.get_logger().info("Distances #{} on client #{}", str(distances.values()),
                            str(distances.keys()))
