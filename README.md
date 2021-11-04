@@ -84,6 +84,11 @@
 - 10131: fashion-non2-sgd-none-100-10-0-100
 - 10133: fashion-none2-sgd-alg-100-20-0-100
 - 10141: fashion-none2-sgd-lie-100-20-0-100
+- 11030: fashion-none2-mkrum-alg-100-20-0-100
+- 11031: fashion-none2-bulyan-lie-100-20-0-100
+- 11032: fashion-none2-bulyan-alg-100-20-0-100
+- 11033: fashion-none2-trmean-lie-100-20-0-100
+- 11033: fashion-none2-trmean-alg-100-20-0-100
 
 
 

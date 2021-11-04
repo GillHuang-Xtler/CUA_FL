@@ -144,7 +144,7 @@ class Client:
         return len(self.distributed_train_dataset[1])
 
     def get_init_balanced_noise(self, gen_net, num_class=10, factor=1):
-        num_total = 50 * 500
+        num_total = 10
 
         noise = torch.randn(num_total, self.args.n_dim).cpu()
         x_query = gen_net(noise)

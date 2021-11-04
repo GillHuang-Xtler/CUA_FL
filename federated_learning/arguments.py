@@ -48,7 +48,7 @@ class Arguments:
         self.epoch_save_end_suffix = "end"
         self.get_poison_effort = 'full'
         self.num_workers = 100
-        self.aggregation = "fedsgd"
+        self.aggregation = "trmean"
         self.attack = "lie"
         self.num_attackers = 0
         self.dev_type = 'sign'

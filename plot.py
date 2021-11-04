@@ -1431,7 +1431,7 @@ def plt_fang_comp():
 
 if __name__ =='__main__':
     # plt_txt()
-    plt_acc()
+    # plt_acc()
     # plt_class_recall_1()
     # plt_utility()
     # plt_atk_bar()
@@ -1443,3 +1443,20 @@ if __name__ =='__main__':
     # plt_non_iid_distribution()
     # plt_none_noniid_defense()
     # plt_fang_comp()
+
+    path9='./res/110331_results.csv'
+    filename9 = path9
+    X9 = []
+    with open(filename9, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            value = [float(s) for s in line.split(',')]
+            X9.append(value[0])
+    print(max(X9))
+
+    # plt.plot(X9, color='purple', label='Reduce-class-introp',linestyle=':', marker = 'o', markersize = 2)
+
+    plt.legend()
+    plt.xlabel('GLOBAL ROUNDS')
+    plt.ylabel('SOURCE CLASS RECALL')
+    plt.show()
